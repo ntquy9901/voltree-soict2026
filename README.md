@@ -85,7 +85,8 @@ The benchmarks VolTree is compared against each have their own walk-forward driv
 HAR and GARCH are deterministic and reproduce the shipped numbers exactly. GNNHAR is a trained neural
 network (faithful re-implementation of arXiv:2308.01419): its QLIKE is a seed-ensemble mean and varies
 slightly across runs and GPUs, so the shipped `gnnhar_<mkt>.json` is the reference training run rather
-than a bit-exact target. Add `--smoke` to any driver for a fast one-fold sanity run.
+than a bit-exact target. The `run_leaf_graph.py` and `run_gnnhar.py` drivers accept `--smoke` for a
+fast one-fold sanity run.
 
 ## Code map
 

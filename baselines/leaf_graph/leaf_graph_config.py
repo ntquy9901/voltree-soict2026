@@ -1,4 +1,3 @@
-N_SEEDS = 3
 SEEDS = (0, 1, 2)
 
 XGB_N_ESTIMATORS = 300
