@@ -49,6 +49,24 @@ under `results/xgb/realized_earnings/`. Each JSON (one per universe and horizon)
 squared/absolute error metrics, a Diebold-Mariano p-value, per-regime robustness, and the fitted graph
 weight. All are shipped for direct inspection.
 
+## Model variants inside each result JSON
+
+Every run writes two arms in the same JSON: the un-smoothed base model, and its leaf-graph-smoothed
+version (the leaf graph is always fitted on top of the base, with its weight selected on validation).
+The earnings block is chosen by `--featureset`. The four ablation variants therefore come from two runs,
+two keys each:
+
+| Variant | `--featureset` | JSON key |
+|---|---|---|
+| Endogenous only (XGB) | `noearn` | `metrics["XGB"]` |
+| Endogenous + leaf graph (XGB+LG) | `noearn` | `metrics["XGB+leafgraph"]` |
+| Endogenous + earnings (XGB+E) | `full` | `metrics["XGB"]` |
+| Endogenous + earnings + leaf graph (XGB+E+LG, the full model) | `full` | `metrics["XGB+leafgraph"]` |
+
+The `noearn` JSONs are at the top level of `results/xgb/`; the `full` (cadence) JSONs under
+`results/xgb/cadence_earnings/`, and the realized-date `full` variant under
+`results/xgb/realized_earnings/`.
+
 ## Code map
 
 | Component | File |
