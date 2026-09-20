@@ -26,8 +26,8 @@ inputs at run time.
 
 Endogenous model with the leaf-cooccurrence graph, per universe and horizon:
 
-    python baselines/leaf_graph_paper/code/run_leaf_graph_paper.py hose
-    python baselines/leaf_graph_paper/code/run_leaf_graph_paper.py sp500
+    python baselines/leaf_graph/code/run_leaf_graph.py hose
+    python baselines/leaf_graph/code/run_leaf_graph.py sp500
 
 Variant that adds the earnings block using a cadence-predicted (origin-time) release schedule:
 
@@ -41,13 +41,13 @@ weight.
 
 | Component | File |
 |---|---|
-| Gradient-boosted model, walk-forward evaluation, leaf-graph smoothing | `baselines/leaf_graph_paper/code/run_leaf_graph_paper.py` |
-| Leaf-cooccurrence graph (kNN over shared tree leaves) | `baselines/leaf_graph_paper/code/leaf_graph_lib.py` |
-| Model configuration (windows, embargo, grids, thresholds) | `baselines/leaf_graph_paper/code/leaf_graph_paper_config.py` |
+| Gradient-boosted model, walk-forward evaluation, leaf-graph smoothing | `baselines/leaf_graph/code/run_leaf_graph.py` |
+| Leaf-cooccurrence graph (kNN over shared tree leaves) | `baselines/leaf_graph/code/leaf_graph_lib.py` |
+| Model configuration (windows, embargo, grids, thresholds) | `baselines/leaf_graph/code/leaf_graph_config.py` |
 | Cadence-predicted earnings schedule | `baselines/expected_schedule/code/expected_schedule.py` |
 | Feature panel (endogenous + earnings features) | `scripts/eda/full_matrix.py` |
 | Graph neural network over HAR features | `scripts/eda/vn_gbm_graph_stage1.py` |
-| Linear (HAR) benchmark | `baselines/paper_models/code/full_compare.py` |
+| Linear (HAR) benchmark | `baselines/har_baseline/code/full_compare.py` |
 | Earnings event study | `scripts/eda/earnings_event_study.py` |
 | Diebold-Mariano test; shared statistics/helpers | `baselines/common/code/` |
 

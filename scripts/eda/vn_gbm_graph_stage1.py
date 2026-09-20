@@ -8,8 +8,8 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
-sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common"))
+sys.path.insert(0, str(REPO / "baselines" / "common"))
 import metrics as M
 import pipeline_config as pc
 import stats as ST

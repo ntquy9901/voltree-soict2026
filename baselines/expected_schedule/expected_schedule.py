@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 MIN_HISTORY = 3
 QUARTERS = ("Q1", "Q2", "Q3", "Q4")
 

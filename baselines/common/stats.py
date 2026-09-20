@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "baselines" / "common" / "code"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "baselines" / "common"))
 import metrics as _metrics
 
 def _aggregate_by_date(values: np.ndarray, dates: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

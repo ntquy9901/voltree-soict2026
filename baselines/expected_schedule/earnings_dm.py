@@ -5,10 +5,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "common" / "code"),
-           str(REPO / "baselines" / "leaf_graph_paper" / "code"),
+           str(REPO / "baselines" / "common"),
+           str(REPO / "baselines" / "leaf_graph"),
            str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
@@ -17,9 +17,9 @@ import full_matrix as FM
 import vn_gbm_graph_stage1 as S1
 import metrics as M
 import stats as ST
-import leaf_graph_paper_config as C
+import leaf_graph_config as C
 import leaf_graph_lib as LG
-import run_leaf_graph_paper as R
+import run_leaf_graph as R
 from expected_schedule import expected_schedule
 
 OWN = R.OWN

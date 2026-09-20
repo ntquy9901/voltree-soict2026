@@ -1,12 +1,12 @@
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 _CODE = Path(__file__).resolve().parent
 for _p in (str(REPO), str(_CODE),
-           str(REPO / "baselines" / "leaf_graph_paper" / "code"),
+           str(REPO / "baselines" / "leaf_graph"),
            str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "common" / "code")):
+           str(REPO / "baselines" / "common")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -20,7 +20,7 @@ def expected_load_earn(market, edates):
     return expected_schedule(hose_quarterly_dates())
 
 def main(smoke=False, markets=("sp500", "hose")):
-    import run_leaf_graph_paper as R
+    import run_leaf_graph as R
     R._load_earn = expected_load_earn
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     for market in markets:

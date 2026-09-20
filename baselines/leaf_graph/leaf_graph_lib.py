@@ -8,14 +8,14 @@ import scipy.sparse as sp
 import xgboost as xgb
 
 _CODE = Path(__file__).resolve().parent
-REPO = _CODE.parents[2]
+REPO = _CODE.parents[1]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
+           str(REPO / "baselines" / "common"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import full_matrix as FM
 import metrics as M
-import leaf_graph_paper_config as C
+import leaf_graph_config as C
 
 FL = FM.FL
 

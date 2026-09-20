@@ -9,7 +9,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
 import full_matrix as FM
 import vn_gbm_graph_stage1 as S1
-sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common"))
 import metrics as M
 import stats as ST
 

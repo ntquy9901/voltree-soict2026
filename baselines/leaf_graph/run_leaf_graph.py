@@ -11,10 +11,10 @@ import numpy as np
 import pandas as pd
 
 _CODE = Path(__file__).resolve().parent
-REPO = _CODE.parents[2]
+REPO = _CODE.parents[1]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "common" / "code"),
-           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
+           str(REPO / "baselines" / "common"),
+           str(REPO / "baselines" / "common"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import full_matrix as FM
@@ -22,7 +22,7 @@ import vn_gbm_graph_stage1 as S1
 import metrics as M
 import stats as ST
 import overfit_check as OF
-import leaf_graph_paper_config as C
+import leaf_graph_config as C
 import leaf_graph_lib as LG
 
 FL = FM.FL
@@ -31,8 +31,8 @@ ORDER = [XGB, XGBLG]
 FEATURE_SETS = ("full", "noearn")
 
 def _own8():
-    cfg_path = REPO / "baselines" / "paper_models" / "code" / "config.py"
-    spec = importlib.util.spec_from_file_location("paper_models_config", cfg_path)
+    cfg_path = REPO / "baselines" / "har_baseline" / "config.py"
+    spec = importlib.util.spec_from_file_location("har_baseline_config", cfg_path)
     pmc = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pmc)
     return pmc.own_set(FM.OWN)
@@ -196,7 +196,7 @@ def run(market, feature_set="full", load_fn=None, out_dir=None, smoke=False, hor
     docs = {}
     for h in horizons:
         t0 = time.time()
-        out_path = out_dir / f"leaf_graph_paper_{market}_{feature_set}{tag}_h{h}.json"
+        out_path = out_dir / f"leaf_graph_{market}_{feature_set}{tag}_h{h}.json"
         a = FM.panel(frames, edates, h)
         embargo = pd.Timedelta(days=int(h * C.EMBARGO_MULT) + C.EMBARGO_BUFFER_DAYS)
         te_pred = {m: [] for m in ORDER}

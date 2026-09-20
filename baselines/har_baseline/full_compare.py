@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 
 _CODE = Path(__file__).resolve().parent
-REPO = _CODE.parents[2]
+REPO = _CODE.parents[1]
 for _p in (str(REPO), str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
+           str(REPO / "baselines" / "common"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import config
