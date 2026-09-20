@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 _ARTIFACT = (Path(__file__).resolve().parents[3]
-             / "results" / "gamma_gbm" / "expected_schedule" / "earnings_dm_sp500.json")
+             / "results" / "xgb" / "expected_schedule" / "earnings_dm_sp500.json")
 
 # Paper-cited headline (docs/paper/soict_2026-09-19_*.tex, Section 5.1): earnings gain % per horizon.
 _HEADLINE_GAIN = {"h1": 3.24, "h5": 3.13, "h10": 3.00, "h22": 2.68}

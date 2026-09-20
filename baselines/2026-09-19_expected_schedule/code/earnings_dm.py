@@ -5,7 +5,7 @@ DM-tests the earnings marginal (XGB+E vs XGB-noearn) because ``full`` and ``noea
 script recomputes both arms' seed-ensembled XGB base predictions on the IDENTICAL walk-forward test rows
 (same folds/embargo/train-minus-val/seeds as ``run_leaf_graph_paper``), using the same leak-free EXPECTED
 earnings schedule as the headline, and runs the date-clustered Diebold-Mariano on the per-observation QLIKE
-losses. Output: results/gamma_gbm/expected_schedule/earnings_dm_sp500.json (gain% + DM p per horizon),
+losses. Output: results/xgb/expected_schedule/earnings_dm_sp500.json (gain% + DM p per horizon),
 giving the earnings significance an artifact that matches the headline QLIKE table exactly.
 
 Run: .venv_gpu_encode/Scripts/python.exe baselines/2026-09-19_expected_schedule/code/earnings_dm.py
@@ -19,7 +19,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[3]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"),
+           str(REPO / "baselines" / "common" / "code"),
            str(REPO / "baselines" / "2026-09-18_leaf_graph_paper" / "code"),
            str(Path(__file__).resolve().parent)):
     if _p not in sys.path:
@@ -74,7 +74,7 @@ def main():  # pragma: no cover - data-driven driver (full S&P 500 walk-forward)
                         "n": int(len(y)), "n_folds": len(yy), "n_dates": int(dm["n_dates"])}
         print(f"h{h}: earn gain {gain:+.2f}%  DM p={dm['p_value']:.3e}  "
               f"(q_noearn {q_noearn:.5f} -> q_XGB+E {q_full:.5f})", flush=True)
-    outp = REPO / "results" / "gamma_gbm" / "expected_schedule" / "earnings_dm_sp500.json"
+    outp = REPO / "results" / "xgb" / "expected_schedule" / "earnings_dm_sp500.json"
     outp.write_text(json.dumps(out, indent=2))
     print("saved", outp, flush=True)
 

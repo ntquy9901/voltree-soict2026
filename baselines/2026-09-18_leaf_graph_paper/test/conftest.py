@@ -6,7 +6,7 @@ from pathlib import Path
 _CODE = Path(__file__).resolve().parents[1] / "code"
 REPO = _CODE.parents[2]
 for _p in (str(REPO), str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"),
-           str(REPO / "scripts" / "quality_gate"), str(_CODE)):
+           str(REPO / "baselines" / "common" / "code"),
+           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)

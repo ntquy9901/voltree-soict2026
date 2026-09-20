@@ -18,7 +18,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
 import vn_gbm_graph_stage1 as S1  # noqa: E402
-sys.path.insert(0, str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
 import metrics as M  # noqa: E402
 import stats as ST  # noqa: E402
 
@@ -33,7 +33,7 @@ WK = 5
 
 def load(market):
     if market == "sp500":
-        sect = json.load(open(REPO / "results" / "gamma_gbm" / "sp500_sectors.json"))
+        sect = json.load(open(REPO / "results" / "xgb" / "sp500_sectors.json"))
         d = "sp500_clean"
     else:
         sect = pd.read_csv(S1.SECT).set_index("symbol")["industry_code"].to_dict(); d = market
@@ -46,7 +46,7 @@ def load(market):
         frames[tk] = S1._feat(fr).assign(ticker=tk, sector=sect.get(tk, -1))
     edates = {}
     if market == "sp500":
-        e = pd.read_parquet(REPO / "results" / "gamma_gbm" / "sp500_earnings.parquet")
+        e = pd.read_parquet(REPO / "results" / "xgb" / "sp500_earnings.parquet")
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
     return frames, sect, edates
 
@@ -158,8 +158,8 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
             dmr[f"{x}_vs_{b}"] = p
             print(f"  DM {x} vs {b:14s}: {(q[b]-q[x])/q[b]*100:+.2f}% (p={p:.3f})", flush=True)
         out[f"h{h}"] = {"qlike": q, "dm": dmr}
-    Path(REPO / "results" / "gamma_gbm" / f"full_matrix_{market}.json").write_text(json.dumps(out, indent=2))
-    print(f"\nsaved results/gamma_gbm/full_matrix_{market}.json", flush=True)
+    Path(REPO / "results" / "xgb" / f"full_matrix_{market}.json").write_text(json.dumps(out, indent=2))
+    print(f"\nsaved results/xgb/full_matrix_{market}.json", flush=True)
 
 
 if __name__ == "__main__":  # pragma: no cover

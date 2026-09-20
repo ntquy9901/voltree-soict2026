@@ -2,7 +2,7 @@
 alone; no DirAcc for the reviewer-facing draft; all horizons). Reuses full_matrix's fold machinery and the
 submission metrics module. Models: HAR, HARQ, GBM(own), GBM+market, GBM+corr, GBM+sector, GBM+plac,
 GBM+earn, GBM+earn+corr, plus an illegal GBM+oracle whose graph feature is the neighbour's TARGET-day value
-(pk at t+h = the row's y), giving the contemporaneous upper bound. Writes results/gamma_gbm/paper_metrics_sp500.json.
+(pk at t+h = the row's y), giving the contemporaneous upper bound. Writes results/xgb/paper_metrics_sp500.json.
 
 Run: python scripts/eda/paper_metrics_sp500.py"""
 import json
@@ -16,7 +16,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
 import full_matrix as FM  # noqa: E402
 import vn_gbm_graph_stage1 as S1  # noqa: E402
-sys.path.insert(0, str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
 import metrics as M  # noqa: E402
 import stats as ST  # noqa: E402
 
@@ -55,7 +55,7 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
     min_rows = 30000 if market == "sp500" else 3000
     frames, sect, edates = FM.load(market)
     if market != "sp500":                                           # inject REAL crawled VN announcement dates
-        _ep = REPO / "results" / "gamma_gbm" / "hose_earnings_combined.parquet"
+        _ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
         if _ep.exists():
             _e = pd.read_parquet(_ep)
             edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in _e.groupby("ticker")}
@@ -132,8 +132,8 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
             print(f"  {m:16s} QLIKE {mm['qlike']:.4f} RMSE {mm['rmse']:.3e} MAE {mm['mae']:.3e} R2 {mm['r2']:.3f}",
                   flush=True)
         print(f"  oracle gain vs corr: {oracle_gain:+.2f}% (p={dmr['GBM+oracle_vs_GBM+corr']:.3f})", flush=True)
-    Path(REPO / "results" / "gamma_gbm" / f"paper_metrics_{market}.json").write_text(json.dumps(out, indent=2))
-    print(f"\nsaved results/gamma_gbm/paper_metrics_{market}.json", flush=True)
+    Path(REPO / "results" / "xgb" / f"paper_metrics_{market}.json").write_text(json.dumps(out, indent=2))
+    print(f"\nsaved results/xgb/paper_metrics_{market}.json", flush=True)
 
 
 if __name__ == "__main__":  # pragma: no cover

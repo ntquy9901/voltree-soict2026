@@ -29,8 +29,8 @@ import pandas as pd
 from sklearn.ensemble import HistGradientBoostingRegressor
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "submission" / "soict_lstm_gat"))
-sys.path.insert(0, str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
+sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
 import metrics as M  # noqa: E402
 import pipeline_config as pc  # noqa: E402
 import stats as ST  # noqa: E402
@@ -45,7 +45,7 @@ TRAIN_START = "2015-01-01"
 FOLDS = ["2022-07-01", "2023-01-01", "2023-07-01", "2024-01-01", "2024-07-01", "2025-01-01",
          "2025-07-01", "2026-01-01", "2100-01-01"]
 TOPK, RNG_SEED = 10, 20260910
-SECT = REPO / "baselines" / "2026-08-29_sector_gat_ablation" / "vn_icb_sectors.csv"
+SECT = REPO / "data" / "vn_icb_sectors.csv"
 
 
 def _feat(d):
@@ -189,7 +189,7 @@ def main():  # pragma: no cover - entry driver: runs both markets, writes JSON
     results = {}
     for market in ("vn30", "vn100"):
         run_market(market, results)
-    Path(REPO / "results" / "gamma_gbm" / "vn_gbm_graph_stage1.json").write_text(json.dumps(results, indent=2))
+    Path(REPO / "results" / "xgb" / "vn_gbm_graph_stage1.json").write_text(json.dumps(results, indent=2))
 
 
 if __name__ == "__main__":  # pragma: no cover

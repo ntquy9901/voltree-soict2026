@@ -5,7 +5,7 @@ is left untouched).
 Reuses the 2026-09-18 leaf-graph runner's full machinery (walk-forward folds, 3-seed ensembles, leaf-graph
 smoothing, DM, spike-robustness, over/under-fit evidence) by injecting an expected-schedule earnings loader
 in place of the module's ``_load_earn`` (a runtime override in THIS process; the sibling baseline's file is
-not modified). Output: ``results/gamma_gbm/expected_schedule/leaf_graph_paper_<market>_full_h*.json``.
+not modified). Output: ``results/xgb/expected_schedule/leaf_graph_paper_<market>_full_h*.json``.
 
 The XGB (no-earn) column is earnings-independent, so it is NOT re-run here -- it reuses the committed
 ``leaf_graph_paper_<market>_noearn_h*.json`` unchanged.
@@ -19,7 +19,7 @@ for _p in (str(REPO), str(_CODE),
            str(REPO / "baselines" / "2026-09-18_leaf_graph_paper" / "code"),
            str(REPO / "baselines" / "2026-09-18_gbm_leaf_graph" / "code"),
            str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code")):
+           str(REPO / "baselines" / "common" / "code")):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
@@ -27,7 +27,7 @@ from expected_schedule import expected_schedule, hose_quarterly_dates  # noqa: E
 # NB: run_leaf_graph_paper is imported lazily inside main() (heavy deps) so this module stays cheap to
 # import for unit-testing expected_load_earn.
 
-OUT_DIR = REPO / "results" / "gamma_gbm" / "expected_schedule"
+OUT_DIR = REPO / "results" / "xgb" / "expected_schedule"
 
 
 def expected_load_earn(market, edates):

@@ -7,7 +7,7 @@ Every test here first collapses the per-observation loss differential to ONE val
 (cross-sectional mean), removing that dependence; residual serial dependence at horizon ``h`` is then
 handled by the HLN long-run-variance lag (``h - 1``) or a circular block bootstrap on the date series.
 
-Reuses the tested Diebold-Mariano implementation from ``submission/soict_lstm_gat/metrics.py``
+Reuses the tested Diebold-Mariano implementation from ``baselines/common/code/metrics.py``
 (``diebold_mariano`` with the Harvey-Leybourne-Newbold 1997 small-sample correction). It is NOT
 reimplemented here.
 
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "submission" / "soict_lstm_gat"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "baselines" / "common" / "code"))
 import metrics as _metrics  # noqa: E402  (reuse the tested DM/HLN implementation)
 
 

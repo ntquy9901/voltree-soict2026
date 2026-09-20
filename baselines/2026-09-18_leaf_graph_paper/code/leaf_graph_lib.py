@@ -32,7 +32,7 @@ import xgboost as xgb
 _CODE = Path(__file__).resolve().parent
 REPO = _CODE.parents[2]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"), str(_CODE)):
+           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)  # pragma: no cover - path bootstrap (conftest pre-seeds paths under pytest)
 import full_matrix as FM  # noqa: E402  (import first so it registers the submission `metrics` path)

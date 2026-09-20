@@ -15,7 +15,7 @@ Functions:
   * ``pit_vs_actual``     -- per-(ticker, event) discrepancy table |predicted - actual| in days.
   * ``summarize``         -- per-market summary of the discrepancy distribution.
   * ``main``              -- runs the discrepancy check over ALL HOSE + SP500 tickers/history, writes
-                             ``results/gamma_gbm/earnings_pit_discrepancy_<market>.csv`` + prints a summary.
+                             ``results/xgb/earnings_pit_discrepancy_<market>.csv`` + prints a summary.
 """
 from __future__ import annotations
 
@@ -94,7 +94,7 @@ def _load_edates(market):  # pragma: no cover - thin data loader (reads the craw
     from pathlib import Path
     repo = Path(__file__).resolve().parents[2]
     fn = "hose_earnings_combined.parquet" if market == "hose" else "sp500_earnings.parquet"
-    e = pd.read_parquet(repo / "results" / "gamma_gbm" / fn)
+    e = pd.read_parquet(repo / "results" / "xgb" / fn)
     e["earnings_date"] = pd.to_datetime(e["earnings_date"])
     return {tk: g["earnings_date"].to_numpy() for tk, g in e.groupby("ticker")}
 
@@ -106,12 +106,12 @@ def main():  # pragma: no cover - data-driven driver over the full crawled histo
     summary = {}
     for market in ("hose", "sp500"):
         disc = pit_vs_actual(_load_edates(market))
-        out_csv = repo / "results" / "gamma_gbm" / f"earnings_pit_discrepancy_{market}.csv"
+        out_csv = repo / "results" / "xgb" / f"earnings_pit_discrepancy_{market}.csv"
         disc.to_csv(out_csv, index=False)
         summary[market] = summarize(disc)
         print(f"{market}: {summary[market]}", flush=True)
         print(f"  wrote {out_csv} ({len(disc)} rows)", flush=True)
-    (repo / "results" / "gamma_gbm" / "earnings_pit_discrepancy_summary.json").write_text(json.dumps(summary, indent=1))
+    (repo / "results" / "xgb" / "earnings_pit_discrepancy_summary.json").write_text(json.dumps(summary, indent=1))
 
 
 if __name__ == "__main__":  # pragma: no cover

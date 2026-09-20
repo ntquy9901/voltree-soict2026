@@ -15,7 +15,7 @@ Memory: an earlier variant accumulated every fold's TRAIN predictions and OOM'd 
 metrics are streamed via sufficient statistics (``_Stream``) and the per-fold train arrays are freed immediately;
 only the smaller val/test arrays are pooled (needed for DM). Run one (market, feature-set, horizon) per process.
 
-Output: results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json, one per horizon, atomic checkpoint.
+Output: results/xgb/leaf_graph_paper_<market>_<full|noearn>_h<h>.json, one per horizon, atomic checkpoint.
 
 Run: python run_leaf_graph_paper.py [hose|sp500] [--featureset full|noearn] [--horizon H] [--smoke]
 """
@@ -34,8 +34,8 @@ import pandas as pd
 _CODE = Path(__file__).resolve().parent
 REPO = _CODE.parents[2]
 for _p in (str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"),
-           str(REPO / "scripts" / "quality_gate"), str(_CODE)):
+           str(REPO / "baselines" / "common" / "code"),
+           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)  # pragma: no cover - path bootstrap (conftest pre-seeds paths under pytest)
 import full_matrix as FM  # noqa: E402
@@ -70,7 +70,7 @@ def _load_earn(market, edates):
     SP500 keeps its own earnings from FM.load."""
     if market == "sp500":
         return edates
-    ep = REPO / "results" / "gamma_gbm" / "hose_earnings_combined.parquet"
+    ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
     if ep.exists():
         e = pd.read_parquet(ep)
         return {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
@@ -247,7 +247,7 @@ def run(market, feature_set="full", load_fn=None, out_dir=None, smoke=False, hor
     horizons = horizons or (C.HORIZONS_SMOKE if smoke else C.HORIZONS)
     fold_cap = 1 if smoke else None
     min_rows = C.MIN_ROWS.get(market, C.MIN_ROWS["default"])
-    out_dir = Path(out_dir) if out_dir else (REPO / "results" / "gamma_gbm")
+    out_dir = Path(out_dir) if out_dir else (REPO / "results" / "xgb")
     out_dir.mkdir(parents=True, exist_ok=True)
     tag = "_smoke" if smoke else ""
 

@@ -5,7 +5,7 @@ GBM models use ``OWN`` = ``config.own_set(FM.OWN)`` (the 8 own-history features,
 HAR-family set (``build_panel.FEATURES``) is NOT a model here -- it lives in the retired ``run_har.py`` ablation.
 Computes the complete Diebold-Mariano matrix (every model pair) from the per-observation QLIKE errors, on one
 shared walk-forward panel. Reuses the exact per-fold graph-feature construction + helpers from
-``paper_metrics_sp500`` (PM) so the models reproduce the paper table. Output: results/gamma_gbm/full_compare_<market>.json.
+``paper_metrics_sp500`` (PM) so the models reproduce the paper table. Output: results/xgb/full_compare_<market>.json.
 
 Run: ``python full_compare.py [hose|sp500]``.
 """
@@ -20,7 +20,7 @@ import pandas as pd
 _CODE = Path(__file__).resolve().parent
 REPO = _CODE.parents[2]
 for _p in (str(REPO), str(REPO / "scripts" / "eda"),
-           str(REPO / "baselines" / "2026-08-21_har_anchored_residual" / "code"), str(_CODE)):
+           str(REPO / "baselines" / "common" / "code"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)  # pragma: no cover - path bootstrap (conftest pre-seeds paths under pytest)
 import config  # noqa: E402
@@ -61,7 +61,7 @@ def run(market, load_fn=None, out_path=None):
     min_rows = config.MIN_ROWS.get(market, config.MIN_ROWS["default"])
     frames, sect, edates = load_fn(market)
     if market != "sp500":                                             # inject REAL crawled VN announcement dates
-        ep = REPO / "results" / "gamma_gbm" / "hose_earnings_combined.parquet"
+        ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
         if ep.exists():
             e = pd.read_parquet(ep)
             edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
@@ -126,7 +126,7 @@ def _print(market, out):  # pragma: no cover - console formatting only
 
 def main():  # pragma: no cover - entry driver: loads real data, writes JSON
     market = sys.argv[1] if len(sys.argv) > 1 else "hose"
-    outp = REPO / "results" / "gamma_gbm" / f"full_compare_{market}.json"
+    outp = REPO / "results" / "xgb" / f"full_compare_{market}.json"
     out = run(market, out_path=outp)                                 # flushes after each horizon (resilient)
     _print(market, out)
     print(f"\nsaved {outp.relative_to(REPO)}", flush=True)
