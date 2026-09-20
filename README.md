@@ -20,7 +20,7 @@ markets rather than universally additive improvements.
 
 Python 3.10+ with:
 
-    pip install numpy pandas scipy xgboost pyarrow matplotlib
+    pip install numpy pandas scipy xgboost pyarrow matplotlib arch torch
 
 ## Input data
 
@@ -73,6 +73,20 @@ two keys each:
 | Endogenous + earnings (XGB+E) | `full` | `metrics["XGB"]` |
 | Endogenous + earnings + leaf graph (XGB+E+LG, the full model) | `full` | `metrics["XGB+leafgraph"]` |
 
+## Baselines
+
+The benchmarks VolTree is compared against each have their own walk-forward driver, run per universe
+(`hose` or `sp500`) and writing to `results/xgb/`:
+
+    python baselines/har_baseline/full_compare.py hose     # HAR linear benchmark  -> full_compare_<mkt>.json
+    python baselines/garch/run_garch.py           hose     # per-stock GARCH(1,1)  -> garch_<mkt>.json
+    python baselines/gnnhar/run_gnnhar.py         hose     # GNNHAR graph net      -> gnnhar_<mkt>.json
+
+HAR and GARCH are deterministic and reproduce the shipped numbers exactly. GNNHAR is a trained neural
+network (faithful re-implementation of arXiv:2308.01419): its QLIKE is a seed-ensemble mean and varies
+slightly across runs and GPUs, so the shipped `gnnhar_<mkt>.json` is the reference training run rather
+than a bit-exact target. Add `--smoke` to any driver for a fast one-fold sanity run.
+
 ## Code map
 
 | Component | File |
@@ -84,6 +98,8 @@ two keys each:
 | S&P 500 earnings Diebold-Mariano significance test | `baselines/cadence_earnings/earnings_dm.py` |
 | Feature panel (endogenous + earnings features), walk-forward split, HAR helper | `baselines/common/feature_panel.py` |
 | Linear (HAR) benchmark | `baselines/har_baseline/full_compare.py` |
+| Per-stock GARCH(1,1) benchmark | `baselines/garch/run_garch.py` |
+| GNNHAR graph-neural-network benchmark | `baselines/gnnhar/run_gnnhar.py` |
 | Earnings event study | `scripts/eda/earnings_event_study.py` |
 | Diebold-Mariano test; shared statistics/helpers | `baselines/common/` |
 
