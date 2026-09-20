@@ -13,11 +13,11 @@ for _p in (str(REPO / "scripts" / "eda"),
            str(REPO / "baselines" / "common"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import full_matrix as FM
+import feature_panel as D
 import metrics as M
 import leaf_graph_config as C
 
-FL = FM.FL
+FL = D.FL
 
 def _params(seed):
     return {"objective": "reg:gamma", "eta": C.XGB_LR, "max_leaves": C.XGB_MAX_LEAVES,

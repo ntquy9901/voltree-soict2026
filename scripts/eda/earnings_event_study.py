@@ -10,13 +10,13 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / "scripts" / "eda"))
-import full_matrix as FM
+sys.path.insert(0, str(REPO / "baselines" / "common"))
+import feature_panel as D
 
 OFFS = list(range(-10, 16))
 
 def event_curve(market):
-    frames, sect, edates = FM.load(market)
+    frames, sect, edates = D.load(market)
     if market == "hose":
         e = pd.read_parquet(REPO / "data" / "earnings" / "hose_earnings.parquet")
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}

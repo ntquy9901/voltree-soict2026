@@ -17,15 +17,14 @@ for _p in (str(REPO / "scripts" / "eda"),
            str(REPO / "baselines" / "cadence_earnings"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
-import full_matrix as FM
-import vn_gbm_graph_stage1 as S1
+import feature_panel as D
 import metrics as M
 import stats as ST
 import overfit_check as OF
 import leaf_graph_config as C
 import leaf_graph_lib as LG
 
-FL = FM.FL
+FL = D.FL
 XGB, XGBLG = "XGB", "XGB+leafgraph"
 ORDER = [XGB, XGBLG]
 FEATURE_SETS = ("full", "noearn")
@@ -35,7 +34,7 @@ def _own8():
     spec = importlib.util.spec_from_file_location("har_baseline_config", cfg_path)
     pmc = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pmc)
-    return pmc.own_set(FM.OWN)
+    return pmc.own_set(D.OWN)
 
 OWN = _own8()
 
@@ -58,7 +57,7 @@ _load_earn = _load_earn_cadence
 
 def resolve_cols(feature_set, has_earn):
     use_earn = has_earn and feature_set == "full"
-    return OWN + (FM.EARN if use_earn else []), use_earn
+    return OWN + (D.EARN if use_earn else []), use_earn
 
 class _Stream:
 
@@ -186,7 +185,7 @@ def _checkpoint(doc, out_path):
 def run(market, feature_set="full", load_fn=None, out_dir=None, smoke=False, horizons=None):
     if feature_set not in FEATURE_SETS:
         raise ValueError(f"feature_set must be one of {FEATURE_SETS}, got {feature_set!r}")
-    load_fn = load_fn or FM.load
+    load_fn = load_fn or D.load
     seeds = (C.SEEDS[0],) if smoke else C.SEEDS
     horizons = horizons or (C.HORIZONS_SMOKE if smoke else C.HORIZONS)
     fold_cap = 1 if smoke else None
@@ -205,16 +204,16 @@ def run(market, feature_set="full", load_fn=None, out_dir=None, smoke=False, hor
     for h in horizons:
         t0 = time.time()
         out_path = out_dir / f"leaf_graph_{market}_{feature_set}{tag}_h{h}.json"
-        a = FM.panel(frames, edates, h)
+        a = D.panel(frames, edates, h)
         embargo = pd.Timedelta(days=int(h * C.EMBARGO_MULT) + C.EMBARGO_BUFFER_DAYS)
         te_pred = {m: [] for m in ORDER}
         va_pred = {m: [] for m in ORDER}
         stream = {m: _Stream() for m in ORDER}
         yy_te, yy_va, dts, alphas = [], [], [], []
         n_done = 0
-        for k in range(len(S1.FOLDS) - 1):
-            ts, tend = pd.Timestamp(S1.FOLDS[k]), pd.Timestamp(S1.FOLDS[k + 1])
-            trf = a[(a.date >= S1.TRAIN_START) & (a.date < ts - embargo)]
+        for k in range(len(D.FOLDS) - 1):
+            ts, tend = pd.Timestamp(D.FOLDS[k]), pd.Timestamp(D.FOLDS[k + 1])
+            trf = a[(a.date >= D.TRAIN_START) & (a.date < ts - embargo)]
             tef = a[(a.date >= ts) & (a.date < tend)]
             if len(tef) == 0 or len(trf) < min_rows:
                 continue

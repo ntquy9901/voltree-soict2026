@@ -13,8 +13,7 @@ for _p in (str(REPO / "scripts" / "eda"),
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import full_matrix as FM
-import vn_gbm_graph_stage1 as S1
+import feature_panel as D
 import metrics as M
 import stats as ST
 import leaf_graph_config as C
@@ -23,22 +22,22 @@ import run_leaf_graph as R
 from expected_schedule import expected_schedule
 
 OWN = R.OWN
-FL = FM.FL
+FL = D.FL
 
 def main():
     market = "sp500"
-    frames, _sect, edates = FM.load(market)
+    frames, _sect, edates = D.load(market)
     earn = expected_schedule(edates)
     seeds = C.SEEDS
-    full_cols = OWN + FM.EARN
+    full_cols = OWN + D.EARN
     out = {}
     for h in (1, 5, 10, 22):
-        a = FM.panel(frames, earn, h)
+        a = D.panel(frames, earn, h)
         embargo = pd.Timedelta(days=int(h * C.EMBARGO_MULT) + C.EMBARGO_BUFFER_DAYS)
         yy, dts, p_full, p_noearn = [], [], [], []
-        for k in range(len(S1.FOLDS) - 1):
-            ts, tend = pd.Timestamp(S1.FOLDS[k]), pd.Timestamp(S1.FOLDS[k + 1])
-            trf = a[(a.date >= S1.TRAIN_START) & (a.date < ts - embargo)]
+        for k in range(len(D.FOLDS) - 1):
+            ts, tend = pd.Timestamp(D.FOLDS[k]), pd.Timestamp(D.FOLDS[k + 1])
+            trf = a[(a.date >= D.TRAIN_START) & (a.date < ts - embargo)]
             tef = a[(a.date >= ts) & (a.date < tend)]
             if len(tef) == 0 or len(trf) < C.MIN_ROWS.get(market, C.MIN_ROWS["default"]):
                 continue
