@@ -6,7 +6,7 @@ config-hardcode scanner's bare ``NAME = <num>$`` rule from firing on legitimate 
 
 Model set is deliberately {XGB base, XGB+leafgraph} ONLY — the champion HGBR ``GBME`` is NOT fit or reported here
 (paper scope). Constants mirror the committed proof-of-concept
-``baselines/2026-09-18_gbm_leaf_graph/code/leaf_graph_config.py`` (same method, same champion-matched XGBoost gamma
+``(prior)/leaf_graph_config.py`` (same method, same champion-matched XGBoost gamma
 capacity). Two run arms share this one config via a driver ``--featureset`` switch (full = OWN-8 + EARN-4 vs
 noearn = OWN-8), so the feature set is NOT a constant here.
 """

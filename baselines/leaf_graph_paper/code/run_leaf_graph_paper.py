@@ -55,7 +55,7 @@ FEATURE_SETS = ("full", "noearn")
 def _own8():
     """OWN-8 own-history feature list, single-sourced from the paper_models config, loaded by path so it does
     NOT register a second bare ``config`` module (avoids the sys.modules collision)."""
-    cfg_path = REPO / "baselines" / "2026-09-13_paper_models" / "code" / "config.py"
+    cfg_path = REPO / "baselines" / "paper_models" / "code" / "config.py"
     spec = importlib.util.spec_from_file_location("paper_models_config", cfg_path)
     pmc = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(pmc)

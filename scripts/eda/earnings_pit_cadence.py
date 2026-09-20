@@ -10,7 +10,7 @@ Functions:
   * ``pit_cadence``       -- dict ticker -> sorted index-aligned schedule (datetime64[ns]) INCLUDING the
                              first MIN_HISTORY actual anchors; for discrepancy analysis ONLY. It is NOT
                              leakage-safe as a panel feature -- the model path uses
-                             ``baselines/2026-09-19_expected_schedule/code/expected_schedule.py::expected_schedule``,
+                             ``baselines/expected_schedule/code/expected_schedule.py::expected_schedule``,
                              which exposes only the causally-predicted dates (index >= MIN_HISTORY).
   * ``pit_vs_actual``     -- per-(ticker, event) discrepancy table |predicted - actual| in days.
   * ``summarize``         -- per-market summary of the discrepancy distribution.
@@ -49,7 +49,7 @@ def pit_cadence(edates):
     DISCREPANCY-ANALYSIS ONLY -- do NOT feed this to ``full_matrix.panel``: the first ``MIN_HISTORY``
     entries are the raw actual dates (anchors), and the panel uses the next scheduled date as a
     forward-looking feature, so an anchor would leak a future realized date at an earlier origin. The
-    leakage-safe model path is ``expected_schedule`` (baselines/2026-09-19_expected_schedule), which drops
+    leakage-safe model path is ``expected_schedule`` (baselines/expected_schedule), which drops
     the anchors."""
     return {tk: np.sort(predict_schedule(dates)).astype("datetime64[ns]") for tk, dates in edates.items()}
 

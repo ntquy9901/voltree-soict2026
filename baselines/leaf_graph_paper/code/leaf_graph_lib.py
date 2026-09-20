@@ -1,7 +1,7 @@
 """XGBoost gamma booster + a leaf-cooccurrence graph that smooths its predictions.
 
 Copied verbatim (math unchanged) from the committed proof-of-concept
-``baselines/2026-09-18_gbm_leaf_graph/code/leaf_graph.py`` (947296f1); the only edit is the config import, which
+``(prior)/leaf_graph.py`` (947296f1); the only edit is the config import, which
 points to THIS baseline's single-source config so every tunable constant lives in one place. The committed
 baseline is NOT modified.
 

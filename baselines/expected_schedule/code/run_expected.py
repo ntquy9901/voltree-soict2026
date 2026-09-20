@@ -16,8 +16,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[3]
 _CODE = Path(__file__).resolve().parent
 for _p in (str(REPO), str(_CODE),
-           str(REPO / "baselines" / "2026-09-18_leaf_graph_paper" / "code"),
-           str(REPO / "baselines" / "2026-09-18_gbm_leaf_graph" / "code"),
+           str(REPO / "baselines" / "leaf_graph_paper" / "code"),
            str(REPO / "scripts" / "eda"),
            str(REPO / "baselines" / "common" / "code")):
     if _p not in sys.path:
