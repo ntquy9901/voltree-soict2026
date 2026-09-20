@@ -1,0 +1,109 @@
+{
+  "market": "sp500",
+  "feature_set": "noearn",
+  "h": 22,
+  "n": 501703,
+  "n_folds": 8,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "features": [
+    "har_daily",
+    "har_weekly",
+    "har_monthly",
+    "mr_change",
+    "mr_slope5",
+    "mr_slope10",
+    "mr_dev5",
+    "mr_z22"
+  ],
+  "metrics": {
+    "XGB": {
+      "mse": 6.225618560458139e-07,
+      "rmse": 0.0007890258906055073,
+      "mae": 0.0002359279804611354,
+      "r2": 0.09345245831646476,
+      "qlike": 0.4459477950457358
+    },
+    "XGB+leafgraph": {
+      "mse": 6.225618560458139e-07,
+      "rmse": 0.0007890258906055073,
+      "mae": 0.0002359279804611354,
+      "r2": 0.09345245831646476,
+      "qlike": 0.4459477950457358
+    }
+  },
+  "train_metrics": {
+    "XGB": {
+      "mse": 9.235572172265853e-07,
+      "rmse": 0.0009610188433254497,
+      "mae": 0.0002439446151245537,
+      "r2": 0.05963229789244873,
+      "qlike": 0.5580031208500184
+    },
+    "XGB+leafgraph": {
+      "mse": 9.235572172265853e-07,
+      "rmse": 0.0009610188433254497,
+      "mae": 0.0002439446151245537,
+      "r2": 0.05963229789244873,
+      "qlike": 0.5580031208500184
+    }
+  },
+  "val_metrics": {
+    "XGB": {
+      "mse": 2.8734957327917595e-07,
+      "rmse": 0.0005360499727443104,
+      "mae": 0.0002282754300423932,
+      "r2": 0.1645077137804195,
+      "qlike": 0.4233651928766646
+    },
+    "XGB+leafgraph": {
+      "mse": 2.8734957327917595e-07,
+      "rmse": 0.0005360499727443104,
+      "mae": 0.0002282754300423932,
+      "r2": 0.1645077137804195,
+      "qlike": 0.4233651928766646
+    }
+  },
+  "fit_diagnostics": {
+    "XGB": {
+      "status": "ok",
+      "val_test_qlike_gap_rel": 0.0533,
+      "train_test_r2_drop": -0.0338,
+      "reasons": []
+    },
+    "XGB+leafgraph": {
+      "status": "ok",
+      "val_test_qlike_gap_rel": 0.0533,
+      "train_test_r2_drop": -0.0338,
+      "reasons": []
+    }
+  },
+  "alpha": {
+    "per_fold": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mean": 0.0
+  },
+  "dm": {
+    "XGB+leafgraph_vs_XGB": 1.0
+  },
+  "gain_pct": {
+    "XGB+leafgraph_vs_XGB": 0.0
+  },
+  "verdict": {
+    "beats": false,
+    "gain_pct": 0.0,
+    "dm_p": 1.0,
+    "criterion": "XGB+leafgraph beats XGB: gain>GAIN_MIN AND DM p<DM_ALPHA"
+  }
+}
