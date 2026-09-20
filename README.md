@@ -30,8 +30,7 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
    the values reported in Table 2.
 
 3. Pre-computed result JSONs are shipped for direct verification (no re-run needed):
-   `results/gamma_gbm/*.json` (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`,
-   ).
+   `results/gamma_gbm/*.json` (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`).
 
 ## Code map (paper component -> file)
 
