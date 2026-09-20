@@ -14,4 +14,4 @@ for market, dirname in MARKETS.items():
     for ticker, g in df.groupby("ticker"):
         g.drop(columns=["ticker"]).to_csv(out_dir / f"{ticker}.csv", index=False)
     print(f"{market}: {len(parts)} shards -> {df['ticker'].nunique()} CSVs -> {out_dir}")
-print("done. Next: python baselines/leaf_graph/code/run_leaf_graph.py hose")
+print("done. Next: python baselines/leaf_graph/run_leaf_graph.py --featureset noearn hose")
