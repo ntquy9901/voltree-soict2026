@@ -14,7 +14,7 @@ Python 3.10+ with:
 
 ## Input data
 
-Compact input panels are provided in `data/repro/`. Expand them into the per-ticker layout the code
+Compact input panels are provided in `data/panels/`. Expand them into the per-ticker layout the code
 reads:
 
     python rebuild_data.py

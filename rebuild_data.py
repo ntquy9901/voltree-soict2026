@@ -7,7 +7,7 @@ REPO = Path(__file__).resolve().parent
 MARKETS = {"sp500": "sp500_clean", "hose": "hose"}
 
 for market, dirname in MARKETS.items():
-    parts = sorted(glob.glob(str(REPO / "data" / "repro" / f"{market}_panel_*.parquet")))
+    parts = sorted(glob.glob(str(REPO / "data" / "panels" / f"{market}_panel_*.parquet")))
     df = pd.concat([pd.read_parquet(p) for p in parts], ignore_index=True)
     out_dir = REPO / "data" / "processed_enriched" / dirname
     out_dir.mkdir(parents=True, exist_ok=True)
