@@ -1,5 +1,3 @@
-import base64
-import io
 import sys
 from pathlib import Path
 
@@ -46,10 +44,6 @@ def event_curve(market):
     med = np.array([np.median(acc[o]) if acc[o] else np.nan for o in OFFS])
     return mean, med, n_events
 
-def png(fig):
-    b = io.BytesIO(); fig.savefig(b, format="png", dpi=170, bbox_inches="tight"); plt.close(fig)
-    return base64.b64encode(b.getvalue()).decode()
-
 def main():
     sp_mean, sp_med, sp_n = event_curve("sp500")
     ho_mean, ho_med, ho_n = event_curve("hose")
@@ -66,42 +60,12 @@ def main():
         ax.set_ylabel("pk / ticker-median (>1 = elevated)")
         ax.legend(fontsize=7); ax.grid(alpha=0.25)
     plt.tight_layout()
-    fig.savefig(REPO / "docs" / "paper" / "figures" / "fig_earnings_event_study.pdf", bbox_inches="tight")
-    b64 = png(fig)
-    d0 = OFFS.index(0)
-    sp0, ho0 = sp_med[d0], ho_med[d0]
-    peak_sp = np.nanmax(sp_med); peak_ho = np.nanmax(ho_med)
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Earnings event study</title>
-<style>body{{font-family:system-ui,Arial;margin:2rem;max-width:1100px}}code{{background:#f2f2f2;padding:1px 4px}}</style>
-</head><body>
-<h1>Earnings event study: volatility around scheduled announcements</h1>
-<p>Realized Parkinson variance (normalised by each ticker's median) as a function of trading days relative to a
-scheduled earnings release (offset 0 = first trading day on/after the announcement). A value above 1 means
-volatility is elevated. The <b>median</b> curve (blue) is the honest signal; the <b>mean</b> (red) is inflated by
-a few extreme thin-market days, especially on HOSE. Green dotted lines mark the feature windows pre=5 and post=10.</p>
-<img src="data:image/png;base64,{b64}" style="width:100%">
-<h2>Reading the curves (use the median)</h2>
-<ul>
-<li><b>S&amp;P 500</b>: a genuine announcement spike. The median jumps to <b>{sp0:.2f} times</b> baseline on day 0
-(peak median {peak_sp:.2f}), stays elevated for a few days after, and returns toward baseline within roughly a
-week. The mean carries a longer, heavier tail because a subset of names stays elevated for about two weeks, which
-the post=10 window covers. This is the empirical basis for the asymmetric pre=5 / post=10 feature windows.</li>
-<li><b>HOSE</b>: no announcement spike. The median is essentially <b>flat at {ho0:.2f}</b> on day 0 and at every
-offset, indistinguishable from a normal day. The HOSE mean is high everywhere (5 to 8 times) but is <i>not</i>
-peaked at day 0, so it reflects thin-market outlier days (limit-lock, illiquid extremes), not an earnings
-response. Vietnam's daily price limits damp the around-announcement move, so there is no event volatility for any
-window to capture. This is why re-tuning the window on HOSE data cannot recover a signal that is absent, and why
-the earnings lever does not transfer.</li>
-</ul>
-<p><i>Note: pk is a variance (squared). Baseline = per-ticker median pk over its full sample. Earnings dates are
-real scheduled announcements (S&amp;P 500 from the earnings archive; HOSE from the SSC portal + vnstock/VCI feed).</i></p>
-</body></html>"""
-    outp = REPO / "docs" / "reports" / "2026-09-12_earnings_event_study.html"
-    outp.write_text(html, encoding="utf-8")
-
-    open(REPO / "docs" / "paper" / "figures" / "fig_earnings_event_study.png", "wb").write(base64.b64decode(b64))
-    print(f"SP500 peak {peak_sp:.2f} (n={sp_n}) | HOSE peak {peak_ho:.2f} (n={ho_n})")
-    print("saved", outp)
+    outp = REPO / "results" / "xgb" / "earnings_event_study.png"
+    outp.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(outp, dpi=170, bbox_inches="tight"); plt.close(fig)
+    print(f"SP500 peak median {np.nanmax(sp_med):.2f} (n={sp_n:,}) | "
+          f"HOSE peak median {np.nanmax(ho_med):.2f} (n={ho_n:,})", flush=True)
+    print("saved", outp.relative_to(REPO), flush=True)
 
 if __name__ == "__main__":
     main()
