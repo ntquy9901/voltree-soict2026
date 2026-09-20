@@ -3,3 +3,7 @@ data/processed_enriched/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# smoke-run artifacts (not paper results)
+*_smoke*.json
+*smoke_h*.json
