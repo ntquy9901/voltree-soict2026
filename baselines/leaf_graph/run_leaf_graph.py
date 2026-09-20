@@ -14,7 +14,7 @@ _CODE = Path(__file__).resolve().parent
 REPO = _CODE.parents[1]
 for _p in (str(REPO / "scripts" / "eda"),
            str(REPO / "baselines" / "common"),
-           str(REPO / "baselines" / "common"), str(_CODE)):
+           str(REPO / "baselines" / "cadence_earnings"), str(_CODE)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 import full_matrix as FM
@@ -39,7 +39,7 @@ def _own8():
 
 OWN = _own8()
 
-def _load_earn(market, edates):
+def _load_earn_realized(market, edates):
     if market == "sp500":
         return edates
     ep = REPO / "data" / "earnings" / "hose_earnings.parquet"
@@ -47,6 +47,14 @@ def _load_earn(market, edates):
         e = pd.read_parquet(ep)
         return {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
     return edates
+
+def _load_earn_cadence(market, edates):
+    from expected_schedule import expected_schedule, hose_quarterly_dates
+    if market == "sp500":
+        return expected_schedule(edates)
+    return expected_schedule(hose_quarterly_dates())
+
+_load_earn = _load_earn_cadence
 
 def resolve_cols(feature_set, has_earn):
     use_earn = has_earn and feature_set == "full"
@@ -254,10 +262,18 @@ def main():
     ap.add_argument("market", nargs="?", choices=("sp500", "hose"), default="hose")
     ap.add_argument("--featureset", choices=FEATURE_SETS, default="full")
     ap.add_argument("--horizon", type=int, default=None, help="run a single horizon in a fresh process")
+    ap.add_argument("--realized", action="store_true",
+                    help="earnings use realized (ex-post) dates instead of the cadence-predicted schedule")
     ap.add_argument("--smoke", action="store_true", help="1 horizon, 1 fold, 1 seed")
     args = ap.parse_args()
     hz = (args.horizon,) if args.horizon else None
-    out = (REPO / "results" / "xgb" / "realized_earnings") if args.featureset == "full" else None
+    global _load_earn
+    if args.featureset != "full":
+        out = None
+    elif args.realized:
+        _load_earn, out = _load_earn_realized, REPO / "results" / "xgb" / "realized_earnings"
+    else:
+        _load_earn, out = _load_earn_cadence, REPO / "results" / "xgb" / "cadence_earnings"
     docs = run(args.market, feature_set=args.featureset, out_dir=out, smoke=args.smoke, horizons=hz)
     if set(C.KILL_HORIZONS) <= set(docs):
         print(f"\nPRE-REGISTERED SUCCESS (h1 & h5 both beat XGB): {success(docs)}", flush=True)

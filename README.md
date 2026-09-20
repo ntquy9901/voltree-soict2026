@@ -1,4 +1,4 @@
-# Stock Volatility Forecasting — Gradient-Boosted Trees with Leaf-Graph Smoothing
+# VolTree: Earnings-Aware Gradient Boosting with Leaf-Graph Smoothing for Stock Volatility Forecasting
 
 A pooled stock-day model for forecasting daily range-based (Parkinson) variance. A gamma-loss
 gradient-boosted tree ensemble (XGBoost) is trained on endogenous own-history features; two optional
@@ -24,24 +24,28 @@ inputs at run time.
 
 ## Running the models
 
-Each command runs the full walk-forward evaluation for one universe.
+`run_leaf_graph.py <universe> [--featureset full|noearn] [--realized]` runs the full walk-forward
+evaluation for one universe (`sp500` or `hose`). `--featureset` takes two values:
 
-Endogenous model with the leaf-cooccurrence graph (no earnings block):
+`noearn` — endogenous own-history features only, with the leaf-cooccurrence graph:
 
     python baselines/leaf_graph/run_leaf_graph.py hose  --featureset noearn
     python baselines/leaf_graph/run_leaf_graph.py sp500 --featureset noearn
 
-Adding the earnings block with the cadence-predicted (origin-time) release schedule:
+`full` — adds the earnings block. By default it uses the cadence-predicted (origin-time, leakage-safe)
+release schedule; this is the main earnings model:
 
-    python baselines/cadence_earnings/run_expected.py
+    python baselines/leaf_graph/run_leaf_graph.py hose  --featureset full
+    python baselines/leaf_graph/run_leaf_graph.py sp500 --featureset full
 
-Running `run_leaf_graph.py <universe> --featureset full` instead adds the earnings block using the
-*realized* (ex-post) release dates — a diagnostic upper bound on the earnings signal — written to
-`results/xgb/realized_earnings/`.
+Adding `--realized` uses realized (ex-post) release dates instead — a diagnostic upper bound on the
+earnings signal:
 
-Outputs are written under `results/xgb/`: the endogenous variants at the top level, the cadence-earnings
-variant under `results/xgb/cadence_earnings/`, and the realized-date variant under
-`results/xgb/realized_earnings/`. Each JSON (one per universe and horizon) holds QLIKE and
+    python baselines/leaf_graph/run_leaf_graph.py sp500 --featureset full --realized
+
+Outputs are written under `results/xgb/`: the endogenous (`noearn`) variants at the top level, the
+cadence-earnings (`full`) variant under `results/xgb/cadence_earnings/`, and the realized-date variant
+under `results/xgb/realized_earnings/`. Each JSON (one per universe and horizon) holds QLIKE and
 squared/absolute error metrics, a Diebold-Mariano p-value, per-regime robustness, and the fitted graph
 weight. All are shipped for direct inspection.
 
