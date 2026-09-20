@@ -1,89 +1,75 @@
-# VolTree — Mã nguồn (để review + chạy)
+# VolTree — Source code and reproduction data
 
-Mã nguồn cho bài báo **VolTree: Earnings-Aware Gradient Boosting with Leaf-Graph Smoothing for
-Stock Volatility Forecasting** (`01_paper_VolTree.pdf`).
+Source code and reproduction data for the paper **VolTree: Earnings-Aware Gradient Boosting with
+Leaf-Graph Smoothing for Stock Volatility Forecasting**.
 
-Thư mục này giữ **đúng cấu trúc đường dẫn** như repo gốc để các `import` (bootstrap `sys.path` theo
-đường dẫn tương đối) hoạt động khi chạy.
+The tree keeps the same relative path layout the code expects, so the `sys.path` bootstraps in each
+script resolve correctly when run in place. This repository is self-contained: it ships the compact
+reproduction panels needed to regenerate the paper's numbers end-to-end.
 
-## Repo đầy đủ (public) — để chạy end-to-end
-Toàn bộ codebase + pipeline dữ liệu ở đây (mã nguồn này là bản trích cho tiện review):
+## Reproducing the paper's numbers
 
-    (anonymized repository — see paper code footnote)
+Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost pyarrow pytest`.
 
-Chạy full (mọi horizon, cả 2 thị trường, sinh lại số trong paper) cần **dữ liệu đã xử lý**
-(`data/processed/`, `results/gamma_gbm/*.parquet`) — dung lượng lớn, **không kèm** trong bản trích này
-(gitignore trong repo). Clone repo để có pipeline dữ liệu đầy đủ.
-
-## Bản đồ mã nguồn → bài báo
-
-| Thành phần trong paper | File |
-|---|---|
-| **VolTree lõi** — walk-forward XGB (gamma) vs XGB+leaf-graph, DM, spike-robust, α fit (Table 2, §4.2/4.3) | `baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py` |
-| Leaf-cooccurrence graph (kNN trên leaf-Hamming, làm mượt ŷ) (§3.5) | `baselines/2026-09-18_leaf_graph_paper/code/leaf_graph_lib.py` |
-| Hằng số cấu hình (walk-forward, embargo, MIN_ROWS, α-grid, spike windows) (§3.7) | `baselines/2026-09-18_leaf_graph_paper/code/leaf_graph_paper_config.py` |
-| **Lịch earnings leak-free** (predicted-at-origin cadence; §3.4, Fig 2, Limitations) | `baselines/2026-09-19_expected_schedule/code/expected_schedule.py` |
-| DM earnings audit (gain 2.7–3.2%, p<1e-3; §5.1) | `baselines/2026-09-19_expected_schedule/code/earnings_dm.py` |
-| Panel đặc trưng + OWN-8 + earnings features + XGB champion floor (§3.2) | `scripts/eda/full_matrix.py` |
-| Đồ thị tương quan train-only (GNNHAR + fold boundaries `FOLDS`, `TRAIN_START`) (§3.4, §3.7) | `scripts/eda/vn_gbm_graph_stage1.py` |
-| Event study earnings (Fig 2) | `scripts/eda/earnings_event_study.py` |
-| Chẩn đoán cadence (median error) | `scripts/eda/earnings_pit_cadence.py` |
-| **Diebold–Mariano** (date-clustered) | `submission/soict_lstm_gat/metrics.py` |
-| Kiểm tra over/under-fit (evidence gate) | `scripts/quality_gate/overfit_check.py` |
-| OWN-8 feature list (single source) | `baselines/2026-09-13_paper_models/code/config.py` |
-| Thống kê phụ trợ | `baselines/2026-08-21_har_anchored_residual/code/stats.py` |
-
-Baseline **GARCH / HAR / GNNHAR** (Table 1) nằm ở repo: `baselines/2026-09-14_gnnhar/`,
-`baselines/2026-09-13_paper_models/code/full_compare.py`, `results/gamma_gbm/garch_*.json`.
-
-## Review nhanh (không cần dữ liệu)
-Đọc theo thứ tự: `run_leaf_graph_paper.py` (vòng walk-forward + DM + verdict) → `leaf_graph_lib.py`
-(dựng đồ thị leaf + làm mượt) → `expected_schedule.py` (chống rò rỉ: `predict_schedule` dùng
-`median(gaps[:i-1])`, chỉ lộ ngày dự đoán từ index ≥ `MIN_HISTORY`).
-
-## Chạy test — 49 test PASS ngay (đã kèm dữ liệu mẫu nhỏ)
-Cần Python 3.10+ và `pip install numpy pandas scikit-learn xgboost pyarrow pytest`.
-
-Chạy **RIÊNG từng thư mục test** (chạy gộp 2 baseline cùng lúc sẽ lỗi `conftest` trùng tên — hạn chế
-của pytest, không phải lỗi code):
-
-    # từ thư mục source_code/ này
-    python -m pytest baselines/2026-09-19_expected_schedule/test -q     # 11 passed  (leak-free schedule + earnings DM)
-    python -m pytest baselines/2026-09-18_leaf_graph_paper/test  -q     # 33 passed  (leaf-graph walk-forward)
-    python -m pytest scripts/eda/test_earnings_event_study.py    -q     #  5 passed  (event study, Fig 2)
-
-Phần lớn test monkeypatch data loader (dữ liệu giả) để kiểm chứng kiến trúc + **tính không-rò-rỉ**;
-một số test đọc dữ liệu mẫu THẬT đã kèm sẵn trong bản trích này:
-`data/raw/vn_earnings/hose_disclosures.csv`, `results/gamma_gbm/hose_earnings_combined.parquet`,
-`results/gamma_gbm/expected_schedule/earnings_dm_sp500.json`.
-
-## Chạy thật (sinh lại số Table 2) — cần repo đầy đủ
-Vòng walk-forward thật đọc **giá OHLCV đã xử lý** (`data/processed/`) — **không kèm** ở đây (lớn,
-gitignore). Clone repo public rồi:
-
-    python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py --market hose  --featureset full
-    python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py --market sp500 --featureset full
-
-Kết quả ghi ra `results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json` (1 file/horizon,
-kèm DM p-value, gain, spike-robustness, α theo fold) — chính là số trong Table 2 của paper.
-
-## Tái hiện số liệu trong paper (Reproduction)
-
-1. Cài phụ thuộc: `pip install pandas numpy scikit-learn xgboost pyarrow`
-2. Dựng lại dữ liệu per-ticker từ các panel nén (`data/repro/*.parquet`):
+1. Rebuild the per-ticker price panels the model reads, from the compact sharded panels in `data/repro/`:
 
        python rebuild_data.py
 
-   → sinh `data/processed_enriched/{sp500_clean,hose}/<ticker>.csv` — **đúng input model**
-   (đã verify: 8 feature OWN của mô hình trùng khớp bit-for-bit với dữ liệu enriched đầy đủ).
-3. Chạy VolTree + các ablation (mọi horizon, walk-forward):
+   This writes `data/processed_enriched/{sp500_clean,hose}/<ticker>.csv`. These are the exact model
+   inputs — verified: the 8 endogenous (OWN) features are bit-for-bit identical to the full enriched
+   data; every other feature (log-volatility momentum, earnings, leaf graph) is computed by the code.
+
+2. Run VolTree and its ablations (all horizons, expanding-window walk-forward):
 
        python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py hose
        python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py sp500
 
-   Earnings leak-free (expected schedule): `baselines/2026-09-19_expected_schedule/`.
-4. Kết quả đã tính sẵn để **đối chiếu ngay** (không cần chạy lại): `results/gamma_gbm/*.json`
-   (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`, `paper_metrics_*`).
+   Leak-free (cadence-predicted) earnings schedule: `baselines/2026-09-19_expected_schedule/`.
+   Outputs go to `results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json` (one per
+   horizon, with the DM p-value, QLIKE gain, spike-robustness, and per-fold weight alpha) — these are
+   the values reported in Table 2.
 
-Dữ liệu kèm: earnings (`results/gamma_gbm/*earnings*.parquet`, `data/raw/vn_earnings/`),
-sector (`sp500_sectors.json`, `vn_icb_sectors.csv`). Giá gốc: Yahoo Finance (S&P 500), vnstock (HOSE).
+3. Pre-computed result JSONs are shipped for direct verification (no re-run needed):
+   `results/gamma_gbm/*.json` (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`,
+   `paper_metrics_*`).
+
+## Code map (paper component -> file)
+
+| Paper component | File |
+|---|---|
+| **VolTree core** — walk-forward gamma-XGBoost vs XGB+leaf-graph, DM, spike-robustness, alpha fit (Table 2) | `baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py` |
+| Leaf-cooccurrence graph (kNN on leaf-Hamming similarity; smooths the forecast) | `baselines/2026-09-18_leaf_graph_paper/code/leaf_graph_lib.py` |
+| Config constants (walk-forward, embargo, MIN_ROWS, alpha grid, spike windows) | `baselines/2026-09-18_leaf_graph_paper/code/leaf_graph_paper_config.py` |
+| **Leak-free earnings schedule** (release dates predicted at the forecast origin) | `baselines/2026-09-19_expected_schedule/code/expected_schedule.py` |
+| Earnings Diebold-Mariano audit | `baselines/2026-09-19_expected_schedule/code/earnings_dm.py` |
+| Feature panel + OWN-8 + earnings features | `scripts/eda/full_matrix.py` |
+| Train-only correlation graph (GNNHAR) + fold boundaries | `scripts/eda/vn_gbm_graph_stage1.py` |
+| HAR / HARQ / boosted baselines (Table 1) | `baselines/2026-09-13_paper_models/code/full_compare.py` |
+| Earnings event study (Fig 2) | `scripts/eda/earnings_event_study.py` |
+| Cadence diagnostics | `scripts/eda/earnings_pit_cadence.py` |
+| Diebold-Mariano test (date-clustered) | `submission/soict_lstm_gat/metrics.py` |
+| Over/under-fit evidence check | `scripts/quality_gate/overfit_check.py` |
+| OWN-8 feature list (single source) | `baselines/2026-09-13_paper_models/code/config.py` |
+| Helper statistics | `baselines/2026-08-21_har_anchored_residual/code/stats.py` |
+
+The GARCH and GNNHAR baseline results are shipped as `results/gamma_gbm/garch_*.json` and
+`gnnhar_*.json` for verification.
+
+## Tests
+
+Run each test directory separately (running two baselines together triggers a duplicate-`conftest`
+name clash — a pytest limitation, not a code bug):
+
+    python -m pytest baselines/2026-09-19_expected_schedule/test -q     # leak-free schedule + earnings DM
+    python -m pytest baselines/2026-09-18_leaf_graph_paper/test  -q     # leaf-graph walk-forward
+    python -m pytest scripts/eda/test_earnings_event_study.py    -q     # event study (Fig 2)
+
+Most tests monkeypatch the data loader (synthetic data) to check the architecture and leakage-safety;
+a few read the small real samples shipped here (`data/raw/vn_earnings/hose_disclosures.csv`,
+`results/gamma_gbm/*.parquet`).
+
+## Data provenance
+
+Prices: Yahoo Finance (S&P 500), vnstock (HOSE). Earnings dates: State Securities Commission portal
+plus a vnstock feed (`data/raw/vn_earnings/`, `results/gamma_gbm/*earnings*.parquet`). Sectors:
+`results/gamma_gbm/sp500_sectors.json`, `baselines/2026-08-29_sector_gat_ablation/vn_icb_sectors.csv`.

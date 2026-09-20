@@ -1,0 +1,116 @@
+{
+  "market": "hose",
+  "feature_set": "full",
+  "h": 1,
+  "n": 49701,
+  "n_folds": 1,
+  "seeds": [
+    0
+  ],
+  "features": [
+    "har_daily",
+    "har_weekly",
+    "har_monthly",
+    "mr_change",
+    "mr_slope5",
+    "mr_slope10",
+    "mr_dev5",
+    "mr_z22",
+    "earn_prox",
+    "earn_soon",
+    "earn_pre",
+    "earn_post"
+  ],
+  "metrics": {
+    "XGB": {
+      "mse": 1.2874200409815854e-06,
+      "rmse": 0.0011346453370906634,
+      "mae": 0.000635529500774244,
+      "r2": 0.21074137870337628,
+      "qlike": 1.5835303428412404
+    },
+    "XGB+leafgraph": {
+      "mse": 1.2874200409815854e-06,
+      "rmse": 0.0011346453370906634,
+      "mae": 0.000635529500774244,
+      "r2": 0.21074137870337628,
+      "qlike": 1.5835303428412404
+    }
+  },
+  "train_metrics": {
+    "XGB": {
+      "mse": 5.862235759019309e-05,
+      "rmse": 0.007656523858135172,
+      "mae": 0.0005198999325070899,
+      "r2": 0.014226952400705484,
+      "qlike": 1.9927019926233287
+    },
+    "XGB+leafgraph": {
+      "mse": 5.862235759019309e-05,
+      "rmse": 0.007656523858135172,
+      "mae": 0.0005198999325070899,
+      "r2": 0.014226952400705484,
+      "qlike": 1.9927019926233287
+    }
+  },
+  "val_metrics": {
+    "XGB": {
+      "mse": 1.2881303984223763e-06,
+      "rmse": 0.0011349583245310712,
+      "mae": 0.0006801235836417627,
+      "r2": 0.17773860683759857,
+      "qlike": 1.1667761686064375
+    },
+    "XGB+leafgraph": {
+      "mse": 1.2881303984223763e-06,
+      "rmse": 0.0011349583245310712,
+      "mae": 0.0006801235836417627,
+      "r2": 0.17773860683759857,
+      "qlike": 1.1667761686064375
+    }
+  },
+  "fit_diagnostics": {
+    "XGB": {
+      "status": "overfit",
+      "val_test_qlike_gap_rel": 0.3572,
+      "train_test_r2_drop": -0.1965,
+      "reasons": [
+        "val->test QLIKE degraded 35.7% > 25%"
+      ]
+    },
+    "XGB+leafgraph": {
+      "status": "overfit",
+      "val_test_qlike_gap_rel": 0.3572,
+      "train_test_r2_drop": -0.1965,
+      "reasons": [
+        "val->test QLIKE degraded 35.7% > 25%"
+      ]
+    }
+  },
+  "alpha": {
+    "per_fold": [
+      0.0
+    ],
+    "mean": 0.0
+  },
+  "dm": {
+    "XGB+leafgraph_vs_XGB": 1.0
+  },
+  "gain_pct": {
+    "XGB+leafgraph_vs_XGB": 0.0
+  },
+  "verdict": {
+    "beats": false,
+    "gain_pct": 0.0,
+    "dm_p": 1.0,
+    "criterion": "XGB+leafgraph beats XGB: gain>GAIN_MIN AND DM p<DM_ALPHA"
+  },
+  "per_fold_qlike": {
+    "XGB": [
+      1.5835303428412404
+    ],
+    "XGB+leafgraph": [
+      1.5835303428412404
+    ]
+  }
+}
