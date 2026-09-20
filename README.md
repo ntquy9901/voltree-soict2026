@@ -31,7 +31,7 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
 
 3. Pre-computed result JSONs are shipped for direct verification (no re-run needed):
    `results/gamma_gbm/*.json` (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`,
-   `paper_metrics_*`).
+   ).
 
 ## Code map (paper component -> file)
 
@@ -44,7 +44,7 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
 | Earnings Diebold-Mariano audit | `baselines/2026-09-19_expected_schedule/code/earnings_dm.py` |
 | Feature panel + OWN-8 + earnings features | `scripts/eda/full_matrix.py` |
 | Train-only correlation graph (GNNHAR) + fold boundaries | `scripts/eda/vn_gbm_graph_stage1.py` |
-| HAR / HARQ / boosted baselines (Table 1) | `baselines/2026-09-13_paper_models/code/full_compare.py` |
+| HAR baseline (Table 1, HAR row) | `baselines/2026-09-13_paper_models/code/full_compare.py` |
 | Earnings event study (Fig 2) | `scripts/eda/earnings_event_study.py` |
 | Cadence diagnostics | `scripts/eda/earnings_pit_cadence.py` |
 | Diebold-Mariano test (date-clustered) | `submission/soict_lstm_gat/metrics.py` |

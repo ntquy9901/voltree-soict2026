@@ -1,0 +1,113 @@
+{
+  "market": "sp500",
+  "feature_set": "full",
+  "h": 22,
+  "n": 501703,
+  "n_folds": 8,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "features": [
+    "har_daily",
+    "har_weekly",
+    "har_monthly",
+    "mr_change",
+    "mr_slope5",
+    "mr_slope10",
+    "mr_dev5",
+    "mr_z22",
+    "earn_prox",
+    "earn_soon",
+    "earn_pre",
+    "earn_post"
+  ],
+  "metrics": {
+    "XGB": {
+      "mse": 6.205277784395065e-07,
+      "rmse": 0.0007877358557533779,
+      "mae": 0.00023448337610878223,
+      "r2": 0.09641439380236727,
+      "qlike": 0.43400589569585907
+    },
+    "XGB+leafgraph": {
+      "mse": 6.205277784395065e-07,
+      "rmse": 0.0007877358557533779,
+      "mae": 0.00023448337610878223,
+      "r2": 0.09641439380236727,
+      "qlike": 0.43400589569585907
+    }
+  },
+  "train_metrics": {
+    "XGB": {
+      "mse": 9.222074250002721e-07,
+      "rmse": 0.0009603163150755443,
+      "mae": 0.00024239991714872065,
+      "r2": 0.06100665888547141,
+      "qlike": 0.5520098030036
+    },
+    "XGB+leafgraph": {
+      "mse": 9.222074250002721e-07,
+      "rmse": 0.0009603163150755443,
+      "mae": 0.00024239991714872065,
+      "r2": 0.06100665888547141,
+      "qlike": 0.5520098030036
+    }
+  },
+  "val_metrics": {
+    "XGB": {
+      "mse": 2.8662809816754084e-07,
+      "rmse": 0.0005353765947139834,
+      "mae": 0.00022506420037964747,
+      "r2": 0.16660546142483634,
+      "qlike": 0.4153548895624652
+    },
+    "XGB+leafgraph": {
+      "mse": 2.8662809816754084e-07,
+      "rmse": 0.0005353765947139834,
+      "mae": 0.00022506420037964747,
+      "r2": 0.16660546142483634,
+      "qlike": 0.4153548895624652
+    }
+  },
+  "fit_diagnostics": {
+    "XGB": {
+      "status": "ok",
+      "val_test_qlike_gap_rel": 0.0449,
+      "train_test_r2_drop": -0.0354,
+      "reasons": []
+    },
+    "XGB+leafgraph": {
+      "status": "ok",
+      "val_test_qlike_gap_rel": 0.0449,
+      "train_test_r2_drop": -0.0354,
+      "reasons": []
+    }
+  },
+  "alpha": {
+    "per_fold": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mean": 0.0
+  },
+  "dm": {
+    "XGB+leafgraph_vs_XGB": 1.0
+  },
+  "gain_pct": {
+    "XGB+leafgraph_vs_XGB": 0.0
+  },
+  "verdict": {
+    "beats": false,
+    "gain_pct": 0.0,
+    "dm_p": 1.0,
+    "criterion": "XGB+leafgraph beats XGB: gain>GAIN_MIN AND DM p<DM_ALPHA"
+  }
+}
