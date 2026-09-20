@@ -15,29 +15,16 @@
    "GARCH": 0.0003271015441598626
   },
   "n_fallback": {
-   "GARCH": 79,
-   "GJR-GARCH": 68
+   "GARCH": 79
   },
   "train_metrics": {
-   "HAR": 0.38198894797604216,
-   "GARCH": 0.4805241494755548,
-   "GJR-GARCH": 0.4746317020619906
+   "GARCH": 0.4805241494755548
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 0.38198894797604216,
-    "test_qlike": 0.3697454222548398
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 0.4805241494755548,
     "test_qlike": 0.46492636409315596
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 0.4746317020619906,
-    "test_qlike": 0.46344935319954234
    }
   }
  },
@@ -57,29 +44,16 @@
    "GARCH": 0.00034266569641272645
   },
   "n_fallback": {
-   "GARCH": 81,
-   "GJR-GARCH": 68
+   "GARCH": 81
   },
   "train_metrics": {
-   "HAR": 0.47221519191757566,
-   "GARCH": 0.5342537515709598,
-   "GJR-GARCH": 0.5271274826519442
+   "GARCH": 0.5342537515709598
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 0.47221519191757566,
-    "test_qlike": 0.436219841044157
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 0.5342537515709598,
     "test_qlike": 0.507693067970522
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 0.5271274826519442,
-    "test_qlike": 0.5034652331665513
    }
   }
  },
@@ -99,29 +73,16 @@
    "GARCH": 0.0003494350420676248
   },
   "n_fallback": {
-   "GARCH": 76,
-   "GJR-GARCH": 63
+   "GARCH": 76
   },
   "train_metrics": {
-   "HAR": 0.5213449715497482,
-   "GARCH": 0.570568765364642,
-   "GJR-GARCH": 0.5613058678188841
+   "GARCH": 0.570568765364642
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 0.5213449715497482,
-    "test_qlike": 0.46124253885765776
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 0.570568765364642,
     "test_qlike": 0.5217865263372573
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 0.5613058678188841,
-    "test_qlike": 0.5163426223348861
    }
   }
  },
@@ -141,29 +102,16 @@
    "GARCH": 0.00036296435848931404
   },
   "n_fallback": {
-   "GARCH": 82,
-   "GJR-GARCH": 64
+   "GARCH": 82
   },
   "train_metrics": {
-   "HAR": 0.5966273685060084,
-   "GARCH": 0.6444814679148994,
-   "GJR-GARCH": 0.6367697386437704
+   "GARCH": 0.6444814679148994
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 0.5966273685060084,
-    "test_qlike": 0.48495260292279674
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 0.6444814679148994,
     "test_qlike": 0.5441916800591194
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 0.6367697386437704,
-    "test_qlike": 0.5366488989271535
    }
   }
  }

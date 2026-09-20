@@ -15,29 +15,16 @@
    "GARCH": 0.00048662151761061666
   },
   "n_fallback": {
-   "GARCH": 97,
-   "GJR-GARCH": 96
+   "GARCH": 97
   },
   "train_metrics": {
-   "HAR": 2.082819648975834,
-   "GARCH": 1.959092317231166,
-   "GJR-GARCH": 1.9588647488977502
+   "GARCH": 1.959092317231166
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 2.082819648975834,
-    "test_qlike": 1.80798284361824
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 1.959092317231166,
     "test_qlike": 1.6562949624994876
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 1.9588647488977502,
-    "test_qlike": 1.6581907360786572
    }
   }
  },
@@ -57,29 +44,16 @@
    "GARCH": 0.0005369838318165339
   },
   "n_fallback": {
-   "GARCH": 95,
-   "GJR-GARCH": 95
+   "GARCH": 95
   },
   "train_metrics": {
-   "HAR": 2.095405087402561,
-   "GARCH": 2.019819818271702,
-   "GJR-GARCH": 2.020734711913197
+   "GARCH": 2.019819818271702
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 2.095405087402561,
-    "test_qlike": 1.817872803754136
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 2.019819818271702,
     "test_qlike": 1.740086144269918
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 2.020734711913197,
-    "test_qlike": 1.7418440861870785
    }
   }
  },
@@ -99,29 +73,16 @@
    "GARCH": 0.0005653480676676482
   },
   "n_fallback": {
-   "GARCH": 93,
-   "GJR-GARCH": 94
+   "GARCH": 93
   },
   "train_metrics": {
-   "HAR": 2.1013456075777714,
-   "GARCH": 2.043126675836526,
-   "GJR-GARCH": 2.044024299432632
+   "GARCH": 2.043126675836526
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 2.1013456075777714,
-    "test_qlike": 1.8236419709392737
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 2.043126675836526,
     "test_qlike": 1.7823493418212073
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 2.044024299432632,
-    "test_qlike": 1.7845221392726525
    }
   }
  },
@@ -141,29 +102,16 @@
    "GARCH": 0.0006064021572209312
   },
   "n_fallback": {
-   "GARCH": 90,
-   "GJR-GARCH": 95
+   "GARCH": 90
   },
   "train_metrics": {
-   "HAR": 2.105036952621032,
-   "GARCH": 2.069942141611554,
-   "GJR-GARCH": 2.0710793392871194
+   "GARCH": 2.069942141611554
   },
   "fit_diagnostics": {
-   "HAR": {
-    "verdict": "ok",
-    "train_qlike": 2.105036952621032,
-    "test_qlike": 1.8323030525887283
-   },
    "GARCH": {
     "verdict": "ok",
     "train_qlike": 2.069942141611554,
     "test_qlike": 1.8366387195297857
-   },
-   "GJR-GARCH": {
-    "verdict": "ok",
-    "train_qlike": 2.0710793392871194,
-    "test_qlike": 1.8378775071340612
    }
   }
  }
