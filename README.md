@@ -66,3 +66,24 @@ gitignore). Clone repo public rồi:
 
 Kết quả ghi ra `results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json` (1 file/horizon,
 kèm DM p-value, gain, spike-robustness, α theo fold) — chính là số trong Table 2 của paper.
+
+## Tái hiện số liệu trong paper (Reproduction)
+
+1. Cài phụ thuộc: `pip install pandas numpy scikit-learn xgboost pyarrow`
+2. Dựng lại dữ liệu per-ticker từ các panel nén (`data/repro/*.parquet`):
+
+       python rebuild_data.py
+
+   → sinh `data/processed_enriched/{sp500_clean,hose}/<ticker>.csv` — **đúng input model**
+   (đã verify: 8 feature OWN của mô hình trùng khớp bit-for-bit với dữ liệu enriched đầy đủ).
+3. Chạy VolTree + các ablation (mọi horizon, walk-forward):
+
+       python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py hose
+       python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py sp500
+
+   Earnings leak-free (expected schedule): `baselines/2026-09-19_expected_schedule/`.
+4. Kết quả đã tính sẵn để **đối chiếu ngay** (không cần chạy lại): `results/gamma_gbm/*.json`
+   (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`, `paper_metrics_*`).
+
+Dữ liệu kèm: earnings (`results/gamma_gbm/*earnings*.parquet`, `data/raw/vn_earnings/`),
+sector (`sp500_sectors.json`, `vn_icb_sectors.csv`). Giá gốc: Yahoo Finance (S&P 500), vnstock (HOSE).

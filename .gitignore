@@ -1,0 +1,5 @@
+# Reviewer-regenerated per-ticker CSVs (rebuilt from data/repro/ by rebuild_data.py)
+data/processed_enriched/
+__pycache__/
+*.pyc
+.pytest_cache/
