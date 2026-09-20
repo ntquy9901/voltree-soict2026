@@ -61,7 +61,7 @@ def main():
                         "n": int(len(y)), "n_folds": len(yy), "n_dates": int(dm["n_dates"])}
         print(f"h{h}: earn gain {gain:+.2f}%  DM p={dm['p_value']:.3e}  "
               f"(q_noearn {q_noearn:.5f} -> q_XGB+E {q_full:.5f})", flush=True)
-    outp = REPO / "results" / "xgb" / "expected_schedule" / "earnings_dm_sp500.json"
+    outp = REPO / "results" / "xgb" / "cadence_earnings" / "earnings_dm_sp500.json"
     outp.write_text(json.dumps(out, indent=2))
     print("saved", outp, flush=True)
 

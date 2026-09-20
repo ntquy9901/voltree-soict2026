@@ -12,7 +12,7 @@ for _p in (str(REPO), str(_CODE),
 
 from expected_schedule import expected_schedule, hose_quarterly_dates
 
-OUT_DIR = REPO / "results" / "xgb" / "expected_schedule"
+OUT_DIR = REPO / "results" / "xgb" / "cadence_earnings"
 
 def expected_load_earn(market, edates):
     if market == "sp500":
