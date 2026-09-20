@@ -68,19 +68,6 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
 The GARCH and GNNHAR baseline results are shipped as `results/xgb/garch_*.json` and
 `gnnhar_*.json` for verification.
 
-## Tests
-
-Run each test directory separately (running two baselines together triggers a duplicate-`conftest`
-name clash — a pytest limitation, not a code bug):
-
-    python -m pytest baselines/2026-09-19_expected_schedule/test -q     # leak-free schedule + earnings DM
-    python -m pytest baselines/2026-09-18_leaf_graph_paper/test  -q     # leaf-graph walk-forward
-    python -m pytest scripts/eda/test_earnings_event_study.py    -q     # event study (Fig 2)
-
-Most tests monkeypatch the data loader (synthetic data) to check the architecture and leakage-safety;
-a few read the small real samples shipped here (`data/raw/vn_earnings/hose_disclosures.csv`,
-`results/xgb/*.parquet`).
-
 ## Data provenance
 
 Prices: Yahoo Finance (S&P 500), vnstock (HOSE). Earnings dates: State Securities Commission portal
