@@ -33,9 +33,10 @@ Variant that adds the earnings block using a cadence-predicted (origin-time) rel
 
     python baselines/cadence_earnings/run_expected.py
 
-Outputs are written under `results/xgb/` as one JSON per universe and horizon, each holding QLIKE and
+Outputs are written under `results/xgb/` (the cadence-earnings variant under
+`results/xgb/cadence_earnings/`) as one JSON per universe and horizon, each holding QLIKE and
 squared/absolute error metrics, a Diebold-Mariano p-value, per-regime robustness, and the fitted graph
-weight.
+weight. Pre-computed outputs are already shipped there for direct inspection.
 
 ## Code map
 
@@ -54,5 +55,5 @@ weight.
 ## Data sources
 
 Daily open-high-low-close prices: Yahoo Finance (U.S. universe) and the `vnstock` feed (Vietnamese
-universe). Earnings-announcement dates: public securities-disclosure feeds. Small input samples are
-included under `data/` and `results/xgb/`.
+universe). Earnings-announcement dates come from public securities-disclosure feeds. All inputs live
+under `data/`: compact price panels in `data/panels/` and earnings dates in `data/earnings/`.
