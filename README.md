@@ -81,6 +81,7 @@ two keys each:
 | Leaf-cooccurrence graph (kNN over shared tree leaves) | `baselines/leaf_graph/leaf_graph_lib.py` |
 | Model configuration (windows, embargo, grids, thresholds) | `baselines/leaf_graph/leaf_graph_config.py` |
 | Cadence-predicted earnings schedule | `baselines/cadence_earnings/expected_schedule.py` |
+| S&P 500 earnings Diebold-Mariano significance test | `baselines/cadence_earnings/earnings_dm.py` |
 | Feature panel (endogenous + earnings features), walk-forward split, HAR helper | `baselines/common/feature_panel.py` |
 | Linear (HAR) benchmark | `baselines/har_baseline/full_compare.py` |
 | Earnings event study | `scripts/eda/earnings_event_study.py` |
