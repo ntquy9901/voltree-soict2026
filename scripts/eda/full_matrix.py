@@ -23,23 +23,19 @@ PLAC_SEEDS = (11, 12, 13)
 WK = 5
 
 def load(market):
-    if market == "sp500":
-        sect = json.load(open(REPO / "results" / "xgb" / "sp500_sectors.json"))
-        d = "sp500_clean"
-    else:
-        sect = pd.read_csv(S1.SECT).set_index("symbol")["industry_code"].to_dict(); d = market
+    d = "sp500_clean" if market == "sp500" else market
     frames = {}
     for p in glob.glob(str(REPO / "data" / "processed_enriched" / d / "*.csv")):
         tk = Path(p).stem
         if tk.endswith("_rejections"):
             continue
         fr = pd.read_csv(p, parse_dates=["date"]).sort_values("date").reset_index(drop=True)
-        frames[tk] = S1._feat(fr).assign(ticker=tk, sector=sect.get(tk, -1))
+        frames[tk] = S1._feat(fr).assign(ticker=tk, sector=-1)
     edates = {}
     if market == "sp500":
         e = pd.read_parquet(REPO / "results" / "xgb" / "sp500_earnings.parquet")
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
-    return frames, sect, edates
+    return frames, {}, edates
 
 def _signed(T, ed):
     n = len(T)
