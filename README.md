@@ -1,10 +1,17 @@
 # VolTree: Earnings-Aware Gradient Boosting with Leaf-Graph Smoothing for Stock Volatility Forecasting
 
-A pooled stock-day model for forecasting daily range-based (Parkinson) variance. A gamma-loss
-gradient-boosted tree ensemble (XGBoost) is trained on endogenous own-history features; two optional
-components can be added on top: a block of earnings-calendar features, and a leaf-cooccurrence graph
-that smooths each trading day's cross-section of forecasts. Forecast horizons are 1, 5, 10, and 22
-trading days; two equity universes are supported (a large U.S. universe and a Vietnamese exchange).
+VolTree is a pooled stock-day model for forecasting daily range-based (Parkinson) variance. A gamma-loss
+gradient-boosted tree ensemble (XGBoost) is trained on endogenous own-history features, and we ask when
+additional information provides incremental value. The endogenous model outperforms the HAR linear
+benchmark, per-stock GARCH, and a learned graph neural network (GNNHAR) on QLIKE at every horizon (1, 5,
+10, and 22 trading days). We then examine two optional components across two structurally different
+markets: a cadence-estimated earnings block, and a leaf-cooccurrence graph that smooths each trading
+day's cross-section of forecasts using the boosted model's own tree leaves, with a validation-fit
+smoothing weight. On the S&P 500, the earnings feature reliably lowers QLIKE by a further 2.7–3.2% at
+every horizon; on Vietnam's Ho Chi Minh Stock Exchange (HOSE), it gives no measurable improvement.
+Conversely, the leaf graph lowers HOSE QLIKE at the one- and five-day horizons, while its learned weight
+collapses toward zero on the S&P 500. The two components thus provide incremental gains in different
+markets rather than universally additive improvements.
 
 ## Requirements
 
