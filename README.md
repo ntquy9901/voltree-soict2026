@@ -1,5 +1,8 @@
 # VolTree: Earnings-Aware Gradient Boosting with Leaf-Graph Smoothing for Stock Volatility Forecasting
 
+> Anonymous repository accompanying a paper under double-blind review. Author, citation, and license
+> information will be added upon acceptance.
+
 VolTree is a pooled stock-day model for forecasting daily range-based (Parkinson) variance. A gamma-loss
 gradient-boosted tree ensemble (XGBoost) is trained on endogenous own-history features, and we ask when
 additional information provides incremental value. The endogenous model outperforms the HAR linear
