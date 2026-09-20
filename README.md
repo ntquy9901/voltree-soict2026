@@ -71,5 +71,4 @@ The GARCH and GNNHAR baseline results are shipped as `results/xgb/garch_*.json` 
 ## Data provenance
 
 Prices: Yahoo Finance (S&P 500), vnstock (HOSE). Earnings dates: State Securities Commission portal
-plus a vnstock feed (`data/raw/vn_earnings/`, `results/xgb/*earnings*.parquet`). Sectors:
-`results/xgb/sp500_sectors.json`, `data/vn_icb_sectors.csv`.
+plus a vnstock feed (`data/raw/vn_earnings/`, `results/xgb/*earnings*.parquet`).
