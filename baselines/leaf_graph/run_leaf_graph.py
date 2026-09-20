@@ -257,7 +257,8 @@ def main():
     ap.add_argument("--smoke", action="store_true", help="1 horizon, 1 fold, 1 seed")
     args = ap.parse_args()
     hz = (args.horizon,) if args.horizon else None
-    docs = run(args.market, feature_set=args.featureset, smoke=args.smoke, horizons=hz)
+    out = (REPO / "results" / "xgb" / "realized_earnings") if args.featureset == "full" else None
+    docs = run(args.market, feature_set=args.featureset, out_dir=out, smoke=args.smoke, horizons=hz)
     if set(C.KILL_HORIZONS) <= set(docs):
         print(f"\nPRE-REGISTERED SUCCESS (h1 & h5 both beat XGB): {success(docs)}", flush=True)
 

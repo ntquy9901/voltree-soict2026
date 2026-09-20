@@ -36,13 +36,14 @@ Adding the earnings block with the cadence-predicted (origin-time) release sched
     python baselines/cadence_earnings/run_expected.py
 
 Running `run_leaf_graph.py <universe> --featureset full` instead adds the earnings block using the
-*realized* (ex-post) release dates — a diagnostic upper bound on the earnings signal.
+*realized* (ex-post) release dates — a diagnostic upper bound on the earnings signal — written to
+`results/xgb/realized_earnings/`.
 
-Outputs are written under `results/xgb/` (the cadence-earnings variant under
-`results/xgb/cadence_earnings/`) as one JSON per universe and horizon, each holding QLIKE and
+Outputs are written under `results/xgb/`: the endogenous variants at the top level, the cadence-earnings
+variant under `results/xgb/cadence_earnings/`, and the realized-date variant under
+`results/xgb/realized_earnings/`. Each JSON (one per universe and horizon) holds QLIKE and
 squared/absolute error metrics, a Diebold-Mariano p-value, per-regime robustness, and the fitted graph
-weight. The endogenous and cadence-earnings outputs are shipped for direct inspection; the realized-date
-variant is regenerated on demand by the command above.
+weight. All are shipped for direct inspection.
 
 ## Code map
 
