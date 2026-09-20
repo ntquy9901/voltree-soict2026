@@ -20,7 +20,7 @@ markets rather than universally additive improvements.
 
 Python 3.10+ with:
 
-    pip install numpy pandas scikit-learn xgboost pyarrow
+    pip install numpy pandas scipy xgboost pyarrow matplotlib
 
 ## Input data
 
