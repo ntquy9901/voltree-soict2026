@@ -1,8 +1,3 @@
-"""Event-study: mean realized Parkinson variance as a function of trading days relative to a scheduled earnings
-announcement (offset -10..+15), for S&P 500 and HOSE. Each earnings date is aligned to the first trading day on/
-after it (offset 0); pk is normalised by the ticker's own median (baseline). The curve shows empirically how many
-days BEFORE and AFTER an announcement volatility is elevated, which justifies (or revises) the pre=5 / post=10
-feature windows and shows whether HOSE's response is muted vs the S&P 500 spike. Writes a self-contained HTML."""
 import base64
 import io
 import sys
@@ -10,16 +5,15 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
-import full_matrix as FM  # noqa: E402
+import full_matrix as FM
 
 OFFS = list(range(-10, 16))
-
 
 def event_curve(market):
     frames, sect, edates = FM.load(market)
@@ -46,19 +40,17 @@ def event_curve(market):
                 j = i + off
                 if 0 <= j < len(pk) and np.isfinite(pk[j]):
                     acc[off].append(pk[j] / base)
-    if n_events == 0:                                       # fail loud: a data/dtype change must not silently
+    if n_events == 0:
         raise ValueError(f"no earnings events aligned for {market} (check earnings-date coverage/dtype)")
     mean = np.array([np.mean(acc[o]) if acc[o] else np.nan for o in OFFS])
     med = np.array([np.median(acc[o]) if acc[o] else np.nan for o in OFFS])
     return mean, med, n_events
 
-
-def png(fig):  # pragma: no cover - renders the figure to base64 PNG for the HTML/paper
+def png(fig):
     b = io.BytesIO(); fig.savefig(b, format="png", dpi=170, bbox_inches="tight"); plt.close(fig)
     return base64.b64encode(b.getvalue()).decode()
 
-
-def main():  # pragma: no cover - entry driver: builds both curves and writes the figure + HTML report
+def main():
     sp_mean, sp_med, sp_n = event_curve("sp500")
     ho_mean, ho_med, ho_n = event_curve("hose")
     x = np.array(OFFS)
@@ -67,7 +59,7 @@ def main():  # pragma: no cover - entry driver: builds both curves and writes th
         ax.plot(x, mean, "-o", ms=3, color="tab:red", label="mean")
         ax.plot(x, med, "-o", ms=3, color="tab:blue", label="median")
         ax.axvline(0, color="0.3", lw=1.0)
-        for xv in (-5, 10):                                # green dotted lines mark the pre=5 / post=10 windows
+        for xv in (-5, 10):
             ax.axvline(xv, color="green", lw=0.8, ls=":")
         ax.set_title(f"{name}: realized pk vs days from earnings (n={n:,} events)")
         ax.set_xlabel("trading days relative to announcement (0 = release)")
@@ -77,7 +69,7 @@ def main():  # pragma: no cover - entry driver: builds both curves and writes th
     fig.savefig(REPO / "docs" / "paper" / "figures" / "fig_earnings_event_study.pdf", bbox_inches="tight")
     b64 = png(fig)
     d0 = OFFS.index(0)
-    sp0, ho0 = sp_med[d0], ho_med[d0]                       # median on the announcement day (honest signal)
+    sp0, ho0 = sp_med[d0], ho_med[d0]
     peak_sp = np.nanmax(sp_med); peak_ho = np.nanmax(ho_med)
     html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Earnings event study</title>
 <style>body{{font-family:system-ui,Arial;margin:2rem;max-width:1100px}}code{{background:#f2f2f2;padding:1px 4px}}</style>
@@ -106,11 +98,10 @@ real scheduled announcements (S&amp;P 500 from the earnings archive; HOSE from t
 </body></html>"""
     outp = REPO / "docs" / "reports" / "2026-09-12_earnings_event_study.html"
     outp.write_text(html, encoding="utf-8")
-    # also save the standalone PNG for the paper (decoded from the same b64 render used in the HTML)
+
     open(REPO / "docs" / "paper" / "figures" / "fig_earnings_event_study.png", "wb").write(base64.b64decode(b64))
     print(f"SP500 peak {peak_sp:.2f} (n={sp_n}) | HOSE peak {peak_ho:.2f} (n={ho_n})")
     print("saved", outp)
 
-
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

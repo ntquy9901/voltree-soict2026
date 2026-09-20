@@ -1,11 +1,3 @@
-"""Full comparison matrix (reviewer + user): HAR / HARQ / GBM(own) / GBM+graph / GBM+market / GBM+earn /
-GBM+earn+graph / random-edge placebo, over ALL horizons, ALL walk-forward folds, and MULTIPLE seeds. Baselines are
-HAR and HARQ (no HAR-X, no market_pk/volume scalar). Cross-sectional / market information enters ONLY through graph
-neighbour aggregates: market = uniform-adjacency aggregate, corr = correlation top-k, placebo = degree-matched
-random edges (multiple seeds). Earnings apply to SP500 only (Vietnam has no per-firm dates). gamma-GBM predictions
-are averaged across seeds (ensemble) for the reported QLIKE + date-clustered DM; per-seed spread is reported.
-
-Run: `python full_matrix.py [sp500|vn30|vn100]`."""
 import glob
 import json
 import sys
@@ -17,19 +9,18 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
-import vn_gbm_graph_stage1 as S1  # noqa: E402
+import vn_gbm_graph_stage1 as S1
 sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
-import metrics as M  # noqa: E402
-import stats as ST  # noqa: E402
+import metrics as M
+import stats as ST
 
 FL = S1.FL
 HAR = ["har_daily", "har_weekly", "har_monthly"]
-OWN = HAR + ["rq", "mr_change", "mr_slope5", "mr_slope10", "mr_dev5", "mr_z22"]   # own-history, no market/volume
+OWN = HAR + ["rq", "mr_change", "mr_slope5", "mr_slope10", "mr_dev5", "mr_z22"]
 EARN = ["earn_prox", "earn_soon", "earn_pre", "earn_post"]
 SEEDS = (0, 1, 2)
 PLAC_SEEDS = (11, 12, 13)
 WK = 5
-
 
 def load(market):
     if market == "sp500":
@@ -50,7 +41,6 @@ def load(market):
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
     return frames, sect, edates
 
-
 def _signed(T, ed):
     n = len(T)
     if ed is None or len(ed) == 0:
@@ -61,7 +51,6 @@ def _signed(T, ed):
     nxt = np.where(idx < len(ev), ev[np.clip(idx, 0, len(ev) - 1)] - tv, 1e9)
     prv = np.where(idx > 0, tv - ev[np.clip(idx - 1, 0, len(ev) - 1)], 1e9)
     return np.maximum(nxt, 0.0), np.maximum(prv, 0.0)
-
 
 def panel(frames, edates, h):
     rows = []
@@ -75,17 +64,14 @@ def panel(frames, edates, h):
     a = pd.concat(rows, ignore_index=True)
     return a.dropna(subset=OWN + ["y"]).reset_index(drop=True)
 
-
 def _uniform(n):
     return (np.ones((n, n)) - np.eye(n)) / (n - 1)
-
 
 def nb(fold, tickers, W):
     piv = fold.pivot_table(index="date", columns="ticker", values="parkinson_variance").reindex(columns=tickers).sort_index()
     V = piv.to_numpy(float); Vf = np.nan_to_num(np.where(np.isnan(V), np.nanmean(V, axis=1, keepdims=True), V))
     NB = Vf @ W.T; dpos = {d: i for i, d in enumerate(piv.index)}; cpos = {c: j for j, c in enumerate(tickers)}
     return NB[fold["date"].map(dpos).to_numpy(), fold["ticker"].map(cpos).to_numpy()]
-
 
 def _harq_ols(tr, te):
     def dm(df):
@@ -94,12 +80,10 @@ def _harq_ols(tr, te):
     nf = 0.01 * np.maximum(tr["y"], FL).mean()
     return np.maximum(dm(te) @ c, nf)
 
-
 def _har_ols(tr, te):
-    x = lambda df: np.column_stack([np.ones(len(df)), df[HAR].to_numpy(float)])  # noqa: E731
+    x = lambda df: np.column_stack([np.ones(len(df)), df[HAR].to_numpy(float)])
     c = np.linalg.lstsq(x(tr), np.maximum(tr["y"].to_numpy(float), FL), rcond=None)[0]
     return np.maximum(x(te) @ c, 0.01 * np.maximum(tr["y"], FL).mean())
-
 
 def gbm(tr, te, cols, seed):
     m = HistGradientBoostingRegressor(loss="gamma", max_iter=300, learning_rate=0.05, max_leaf_nodes=31,
@@ -107,8 +91,7 @@ def gbm(tr, te, cols, seed):
     m.fit(tr[cols].to_numpy(float), np.maximum(tr["y"].to_numpy(float), FL))
     return np.maximum(m.predict(te[cols].to_numpy(float)), FL)
 
-
-def main():  # pragma: no cover - entry driver: full walk-forward over all folds/seeds, writes JSON
+def main():
     market = sys.argv[1] if len(sys.argv) > 1 else "sp500"
     frames, sect, edates = load(market)
     has_earn = bool(edates)
@@ -141,7 +124,7 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
             trf = fold[(fold.date >= S1.TRAIN_START) & (fold.date < ts - embargo)]; tef = fold[(fold.date >= ts) & (fold.date < tend)]
             preds["HAR"].append(_har_ols(trf, tef)); preds["HARQ"].append(_harq_ols(trf, tef))
             for mdl, cols in GMODELS.items():
-                preds[mdl].append(np.mean([gbm(trf, tef, cols, s) for s in SEEDS], 0))   # seed-ensemble
+                preds[mdl].append(np.mean([gbm(trf, tef, cols, s) for s in SEEDS], 0))
             yy.append(tef["y"].to_numpy(float)); dts.append(tef["date"].to_numpy())
         y = np.concatenate(yy); dates = np.concatenate(dts)
         e = {m: M.per_obs_qlike(y, np.concatenate(preds[m]), floor=FL) for m in preds}
@@ -161,6 +144,5 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
     Path(REPO / "results" / "xgb" / f"full_matrix_{market}.json").write_text(json.dumps(out, indent=2))
     print(f"\nsaved results/xgb/full_matrix_{market}.json", flush=True)
 
-
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

@@ -1,24 +1,3 @@
-"""Stage 1 of docs/experement_guide/gbm_graph_volatility_implementation_brief.md, executed faithfully on VN30 and
-VN100: GBM + leakage-safe graph AGGREGATION features, with the decision controls the brief mandates.
-
-Models (per brief section 6 / 9):
-  M0  = GBM(stock-only own features)                       -- core nonlinear baseline
-  M1  = M0 + market aggregate (market_pk) + sector aggregate (same-ICB-sector mean vol at t)
-  M2  = M1 + graph-aggregation features from a volatility-correlation top-k graph (brief section 16 core set)
-  M2p = M1 + the SAME graph features but from RANDOMISED edges of identical density (brief placebo, section 9)
-
-Graph (section 5/16): per-fold static volatility-correlation graph built on TRAIN log-vol only, top_k neighbours,
-positive-only weights. Neighbour aggregation features (section 6/16): weighted neighbour vol, weighted neighbour
-vol-shock, neighbour vol max, neighbour vol dispersion, node-minus-neighbour vol, weighted neighbour return,
-weighted neighbour volume-shock.
-
-Validation (section 10): expanding walk-forward, per-fold graph from train only, target embargo at the train/test
-boundary, single evaluation of pooled test. Metric QLIKE; DM aggregated by trading date (section 11). Decision
-(section 12): a graph model is retained only if M2 beats BOTH M0 and, crucially, M1, AND beats the placebo.
-
-Note on GBM: uses HistGradientBoostingRegressor(loss='gamma') -- the project's canonical gamma-loss GBM
-(gamma deviance == QLIKE up to a constant), consistent with the delivered SP500/VN champion; satisfies the
-brief's "nonlinear GBM" intent without adding a LightGBM/XGBoost dependency."""
 import glob
 import json
 import sys
@@ -31,9 +10,9 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
 sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
-import metrics as M  # noqa: E402
-import pipeline_config as pc  # noqa: E402
-import stats as ST  # noqa: E402
+import metrics as M
+import pipeline_config as pc
+import stats as ST
 
 FL = pc.QLIKE_FLOOR
 WK, MO = 5, 22
@@ -47,7 +26,6 @@ FOLDS = ["2022-07-01", "2023-01-01", "2023-07-01", "2024-01-01", "2024-07-01", "
 TOPK, RNG_SEED = 10, 20260910
 SECT = REPO / "data" / "vn_icb_sectors.csv"
 
-
 def _feat(d):
     pk = d["parkinson_variance"].to_numpy(float); lpk = pd.Series(np.log(np.maximum(pk, FL)), index=d.index)
     d["logpk"] = lpk
@@ -56,7 +34,6 @@ def _feat(d):
     d["mr_slope10"] = (lpk - lpk.shift(2 * WK)) / (2 * WK); d["mr_dev5"] = lpk - lpk.rolling(WK).mean()
     d["mr_z22"] = (lpk - lpk.rolling(MO).mean()) / (lpk.rolling(MO).std() + FL)
     return d
-
 
 def load(market):
     sect = pd.read_csv(SECT).set_index("symbol")["industry_code"].to_dict()
@@ -71,7 +48,6 @@ def load(market):
                              "daily_return"]]
     return frames
 
-
 def panel(frames, h):
     rows = []
     for tk, d in frames.items():
@@ -81,15 +57,11 @@ def panel(frames, h):
     a["sect_mean"] = a.groupby(["date", "sector"])["parkinson_variance"].transform("mean")
     return a.dropna(subset=OWN + ["y"]).reset_index(drop=True)
 
-
 def _std_cols(df):
     z = (df - df.mean()) / df.std().replace(0, np.nan)
     return z.fillna(0.0).to_numpy(float), z.notna().to_numpy(float)
 
-
 def build_graph(train, tickers, rng):
-    """per-fold static vol-correlation top-k graph on TRAIN logpk; returns real+placebo row-normalised weight
-    matrices W[i,j] (neighbour j of node i), positive-only."""
     piv = train.pivot_table(index="date", columns="ticker", values="logpk").reindex(columns=tickers)
     X, Xm = _std_cols(piv)
     corr = (X.T @ X) / np.maximum(Xm.T @ Xm, 1.0); np.fill_diagonal(corr, -np.inf)
@@ -103,9 +75,7 @@ def build_graph(train, tickers, rng):
     Wp /= np.maximum(np.abs(Wp).sum(1, keepdims=True), 1e-12)
     return W, Wp
 
-
 def graph_feats(fold, tickers, W, tag):
-    """neighbour-aggregation features for every (date,ticker) row in `fold` using weight matrix W."""
     idx = {t: j for j, t in enumerate(tickers)}
     def mat(col):
         m = fold.pivot_table(index="date", columns="ticker", values=col).reindex(columns=tickers)
@@ -128,15 +98,13 @@ def graph_feats(fold, tickers, W, tag):
     cols = {f"{k}{tag}": out[k][r, c] for k in GRAPH}
     return pd.DataFrame(cols, index=fold.index)
 
-
 def _gbm(tr, te, cols):
     m = HistGradientBoostingRegressor(loss="gamma", max_iter=300, learning_rate=0.05, max_leaf_nodes=31,
                                       l2_regularization=1.0, random_state=0)
     m.fit(tr[cols].to_numpy(float), np.maximum(tr["y"].to_numpy(float), FL))
     return np.maximum(m.predict(te[cols].to_numpy(float)), FL)
 
-
-def run_market(market, results):  # pragma: no cover - driver: full walk-forward loop (helpers tested directly)
+def run_market(market, results):
     frames = load(market)
     print(f"\n########## {market.upper()} ({len(frames)} tickers) ##########", flush=True)
     for h in (1, 5, 10, 22):
@@ -184,13 +152,11 @@ def run_market(market, results):  # pragma: no cover - driver: full walk-forward
         results[f"{market}_h{h}"] = {"q": q, "p_M2_vs_M1": dm("M2", "M1"), "p_M2_vs_M0": dm("M2", "M0"),
                                      "p_M2_vs_M2p": dm("M2", "M2p"), "p_M1_vs_M0": dm("M1", "M0"), "n": len(dates)}
 
-
-def main():  # pragma: no cover - entry driver: runs both markets, writes JSON
+def main():
     results = {}
     for market in ("vn30", "vn100"):
         run_market(market, results)
     Path(REPO / "results" / "xgb" / "vn_gbm_graph_stage1.json").write_text(json.dumps(results, indent=2))
 
-
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

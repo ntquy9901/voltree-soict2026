@@ -1,14 +1,3 @@
-"""Full model comparison: the paper model set (OWN-8 own-history GBM + graph/earn variants + HAR) x 5 metrics
-+ FULL pairwise DM matrix.
-
-GBM models use ``OWN`` = ``config.own_set(FM.OWN)`` (the 8 own-history features, rq dropped); the principled
-HAR-family set (``build_panel.FEATURES``) is NOT a model here -- it lives in the retired ``run_har.py`` ablation.
-Computes the complete Diebold-Mariano matrix (every model pair) from the per-observation QLIKE errors, on one
-shared walk-forward panel. Reuses the exact per-fold graph-feature construction + helpers from
-``paper_metrics_sp500`` (PM) so the models reproduce the paper table. Output: results/xgb/full_compare_<market>.json.
-
-Run: ``python full_compare.py [hose|sp500]``.
-"""
 import itertools
 import json
 import sys
@@ -22,28 +11,24 @@ REPO = _CODE.parents[2]
 for _p in (str(REPO), str(REPO / "scripts" / "eda"),
            str(REPO / "baselines" / "common" / "code"), str(_CODE)):
     if _p not in sys.path:
-        sys.path.insert(0, _p)  # pragma: no cover - path bootstrap (conftest pre-seeds paths under pytest)
-import config  # noqa: E402
-import full_matrix as FM  # noqa: E402
-import vn_gbm_graph_stage1 as S1  # noqa: E402
-import metrics as M  # noqa: E402
-import stats as ST  # noqa: E402
-import paper_metrics_sp500 as PM  # noqa: E402  (reuse nb_col / adj_sector / all_metrics verbatim)
+        sys.path.insert(0, _p)
+import config
+import full_matrix as FM
+import vn_gbm_graph_stage1 as S1
+import metrics as M
+import stats as ST
+import paper_metrics_sp500 as PM
 
 FL = FM.FL
-OWN = config.own_set(FM.OWN)   # single source: baselines... config.OWN_DROP/OWN_ADD
-
+OWN = config.own_set(FM.OWN)
 
 def dm_matrix(err, dates, h):
-    """Full pairwise date-clustered DM p-value matrix over the per-obs error dict ``err`` (all model pairs)."""
     out = {}
     for a, b in itertools.combinations(err, 2):
         out[f"{a}_vs_{b}"] = float(ST.date_clustered_dm(err[a], err[b], dates, h)["p_value"])
     return out
 
-
-def _checkpoint(out, out_path):  # pragma: no cover - I/O side effect, exercised only in real runs
-    """Atomically write the accumulated results so a Colab disconnect keeps completed horizons."""
+def _checkpoint(out, out_path):
     if out_path is None:
         return
     tmp = Path(str(out_path) + ".tmp")
@@ -51,16 +36,11 @@ def _checkpoint(out, out_path):  # pragma: no cover - I/O side effect, exercised
     tmp.replace(out_path)
     print(f"[checkpoint] wrote {out_path.name} ({len(out)} horizons)", flush=True)
 
-
 def run(market, load_fn=None, out_path=None):
-    """Full comparison for a market; returns {h: {metrics, dm_qlike (full matrix), n}}.
-
-    When ``out_path`` is given, the accumulated results are flushed to disk after EACH horizon (crash/disconnect
-    resilience for long Colab runs)."""
     load_fn = load_fn or FM.load
     min_rows = config.MIN_ROWS.get(market, config.MIN_ROWS["default"])
     frames, sect, edates = load_fn(market)
-    if market != "sp500":                                             # inject REAL crawled VN announcement dates
+    if market != "sp500":
         ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
         if ep.exists():
             e = pd.read_parquet(ep)
@@ -113,24 +93,21 @@ def run(market, load_fn=None, out_path=None):
         err = {m: M.per_obs_qlike(y, np.concatenate(preds[m]), floor=FL) for m in models}
         met = {m: PM.all_metrics(y, np.concatenate(preds[m])) for m in models}
         out[f"h{h}"] = {"n": int(len(y)), "metrics": met, "dm_qlike_matrix": dm_matrix(err, dates, h)}
-        _checkpoint(out, out_path)                                    # flush after each horizon
+        _checkpoint(out, out_path)
     return out
 
-
-def _print(market, out):  # pragma: no cover - console formatting only
+def _print(market, out):
     for h, r in out.items():
         print(f"\n=== {market} {h} (n={r['n']:,}) ===", flush=True)
         for m, mm in sorted(r["metrics"].items(), key=lambda kv: kv[1]["qlike"]):
             print(f"  {m:16s} QLIKE {mm['qlike']:.4f} R2 {mm['r2']:+.3f}", flush=True)
 
-
-def main():  # pragma: no cover - entry driver: loads real data, writes JSON
+def main():
     market = sys.argv[1] if len(sys.argv) > 1 else "hose"
     outp = REPO / "results" / "xgb" / f"full_compare_{market}.json"
-    out = run(market, out_path=outp)                                 # flushes after each horizon (resilient)
+    out = run(market, out_path=outp)
     _print(market, out)
     print(f"\nsaved {outp.relative_to(REPO)}", flush=True)
 
-
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

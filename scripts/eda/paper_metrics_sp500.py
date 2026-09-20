@@ -1,10 +1,3 @@
-"""All-metrics + oracle pass for the SP500 paper tables (per user: report MSE/RMSE/MAE/R2/QLIKE, not QLIKE
-alone; no DirAcc for the reviewer-facing draft; all horizons). Reuses full_matrix's fold machinery and the
-submission metrics module. Models: HAR, HARQ, GBM(own), GBM+market, GBM+corr, GBM+sector, GBM+plac,
-GBM+earn, GBM+earn+corr, plus an illegal GBM+oracle whose graph feature is the neighbour's TARGET-day value
-(pk at t+h = the row's y), giving the contemporaneous upper bound. Writes results/xgb/paper_metrics_sp500.json.
-
-Run: python scripts/eda/paper_metrics_sp500.py"""
 import json
 import sys
 from pathlib import Path
@@ -14,17 +7,15 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts" / "eda"))
-import full_matrix as FM  # noqa: E402
-import vn_gbm_graph_stage1 as S1  # noqa: E402
+import full_matrix as FM
+import vn_gbm_graph_stage1 as S1
 sys.path.insert(0, str(REPO / "baselines" / "common" / "code"))
-import metrics as M  # noqa: E402
-import stats as ST  # noqa: E402
+import metrics as M
+import stats as ST
 
 FL = FM.FL
 
-
 def nb_col(fold, tickers, W, col):
-    """Neighbour aggregate on an arbitrary value column (full_matrix.nb hardcodes parkinson_variance)."""
     piv = fold.pivot_table(index="date", columns="ticker", values=col).reindex(columns=tickers).sort_index()
     V = piv.to_numpy(float)
     Vf = np.nan_to_num(np.where(np.isnan(V), np.nanmean(V, axis=1, keepdims=True), V))
@@ -33,11 +24,9 @@ def nb_col(fold, tickers, W, col):
     cpos = {c: j for j, c in enumerate(tickers)}
     return NB[fold["date"].map(dpos).to_numpy(), fold["ticker"].map(cpos).to_numpy()]
 
-
 def all_metrics(y, p):
     return {"mse": M.mse(y, p), "rmse": M.rmse(y, p), "mae": M.mae(y, p),
             "r2": M.r2(y, p), "qlike": float(np.mean(M.per_obs_qlike(y, p, floor=FL)))}
-
 
 def adj_sector(tickers, sect):
     n = len(tickers)
@@ -49,17 +38,16 @@ def adj_sector(tickers, sect):
             W[i, j] = 1.0 / len(js)
     return W
 
-
-def main():  # pragma: no cover - entry driver: full walk-forward over all folds/seeds, writes JSON
+def main():
     market = sys.argv[1] if len(sys.argv) > 1 else "sp500"
     min_rows = 30000 if market == "sp500" else 3000
     frames, sect, edates = FM.load(market)
-    if market != "sp500":                                           # inject REAL crawled VN announcement dates
+    if market != "sp500":
         _ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
         if _ep.exists():
             _e = pd.read_parquet(_ep)
             edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in _e.groupby("ticker")}
-    has_earn = bool(edates)                                          # VN earnings partial (dense 2025-26)
+    has_earn = bool(edates)
     out = {}
     for h in (1, 5, 10, 22):
         a = FM.panel(frames, edates, h)
@@ -90,7 +78,7 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
             fold["g_corr"] = FM.nb(fold, tickers, Wc)
             fold["g_sector"] = FM.nb(fold, tickers, Ws)
             fold["g_plac"] = FM.nb(fold, tickers, Wp)
-            fold["g_oracle"] = nb_col(fold, tickers, Wc, "y")            # illegal: neighbour target at t+h
+            fold["g_oracle"] = nb_col(fold, tickers, Wc, "y")
             for c in ("g_market", "g_corr", "g_sector", "g_plac", "g_oracle"):
                 fold[c] = fold[c].fillna(0.0)
             trf = fold[(fold.date >= S1.TRAIN_START) & (fold.date < ts - embargo)]
@@ -135,6 +123,5 @@ def main():  # pragma: no cover - entry driver: full walk-forward over all folds
     Path(REPO / "results" / "xgb" / f"paper_metrics_{market}.json").write_text(json.dumps(out, indent=2))
     print(f"\nsaved results/xgb/paper_metrics_{market}.json", flush=True)
 
-
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()
