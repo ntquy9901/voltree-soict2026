@@ -19,18 +19,32 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
    inputs — verified: the 8 endogenous (OWN) features are bit-for-bit identical to the full enriched
    data; every other feature (log-volatility momentum, earnings, leaf graph) is computed by the code.
 
-2. Run VolTree and its ablations (all horizons, expanding-window walk-forward):
+2. Reproduce the model results (all horizons, expanding-window walk-forward):
 
-       python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py hose
-       python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py sp500
+   - **Headline leak-free earnings** — the XGB+E and VolTree rows in Tables 1-2, using the
+     cadence-predicted (origin-time) release schedule:
 
-   Leak-free (cadence-predicted) earnings schedule: `baselines/2026-09-19_expected_schedule/`.
-   Outputs go to `results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json` (one per
-   horizon, with the DM p-value, QLIKE gain, spike-robustness, and per-fold weight alpha) — these are
-   the values reported in Table 2.
+         python baselines/2026-09-19_expected_schedule/code/run_expected.py
 
-3. Pre-computed result JSONs are shipped for direct verification (no re-run needed):
-   `results/gamma_gbm/*.json` (`leaf_graph_paper_*`, `garch_*`, `gnnhar_*`, `full_compare_*`).
+     writes `results/gamma_gbm/expected_schedule/leaf_graph_paper_<market>_full_h<h>.json`.
+
+   - **Endogenous and leaf-graph variants** — the XGB and XGB+leaf-graph rows (Table 2 `noearn`), plus
+     the realized-date upper bound:
+
+         python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py hose
+         python baselines/2026-09-18_leaf_graph_paper/code/run_leaf_graph_paper.py sp500
+
+     writes `results/gamma_gbm/leaf_graph_paper_<market>_<full|noearn>_h<h>.json`. (The `full` output
+     here uses *realized* dates = the optimistic upper bound; the headline uses the expected schedule
+     above.)
+
+   Each JSON carries the DM p-value, QLIKE gain, spike-robustness, and per-fold weight alpha.
+
+3. Pre-computed result JSONs are shipped for direct verification (no re-run needed), under
+   `results/gamma_gbm/` and `results/gamma_gbm/expected_schedule/`: `leaf_graph_paper_*` (VolTree +
+   ablations), `expected_schedule/leaf_graph_paper_*_full` (leak-free headline), `earnings_dm_sp500`
+   (SP500 earnings DM), `garch_*`, `gnnhar_*`, `full_compare_*` (HAR). Every result JSON is slimmed to
+   the models the paper reports (HAR, GARCH, GNNHAR, XGB, XGB+E, VolTree).
 
 ## Code map (paper component -> file)
 
@@ -43,7 +57,7 @@ Requirements: Python 3.10+ and `pip install numpy pandas scikit-learn xgboost py
 | Earnings Diebold-Mariano audit | `baselines/2026-09-19_expected_schedule/code/earnings_dm.py` |
 | Feature panel + OWN-8 + earnings features | `scripts/eda/full_matrix.py` |
 | Train-only correlation graph (GNNHAR) + fold boundaries | `scripts/eda/vn_gbm_graph_stage1.py` |
-| HAR baseline (Table 1, HAR row) | `baselines/2026-09-13_paper_models/code/full_compare.py` |
+| HAR baseline (Table 1, HAR row) | `baselines/2026-09-13_paper_models/code/full_compare.py` (shipped `full_compare_*.json` slimmed to the HAR row) |
 | Earnings event study (Fig 2) | `scripts/eda/earnings_event_study.py` |
 | Cadence diagnostics | `scripts/eda/earnings_pit_cadence.py` |
 | Diebold-Mariano test (date-clustered) | `submission/soict_lstm_gat/metrics.py` |
