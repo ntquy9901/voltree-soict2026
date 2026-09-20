@@ -7,3 +7,6 @@ __pycache__/
 # smoke-run artifacts (not paper results)
 *_smoke*.json
 *smoke_h*.json
+
+# generated figures (event study regenerates this from data)
+results/xgb/*.png
