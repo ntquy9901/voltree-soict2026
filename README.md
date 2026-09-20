@@ -70,10 +70,6 @@ two keys each:
 | Endogenous + earnings (XGB+E) | `full` | `metrics["XGB"]` |
 | Endogenous + earnings + leaf graph (XGB+E+LG, the full model) | `full` | `metrics["XGB+leafgraph"]` |
 
-The `noearn` JSONs are at the top level of `results/xgb/`; the `full` (cadence) JSONs under
-`results/xgb/cadence_earnings/`, and the realized-date `full` variant under
-`results/xgb/realized_earnings/`.
-
 ## Code map
 
 | Component | File |
