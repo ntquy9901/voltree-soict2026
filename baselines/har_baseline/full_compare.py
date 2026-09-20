@@ -41,7 +41,7 @@ def run(market, load_fn=None, out_path=None):
     min_rows = config.MIN_ROWS.get(market, config.MIN_ROWS["default"])
     frames, sect, edates = load_fn(market)
     if market != "sp500":
-        ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
+        ep = REPO / "data" / "earnings" / "hose_earnings.parquet"
         if ep.exists():
             e = pd.read_parquet(ep)
             edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}

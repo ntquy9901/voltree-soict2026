@@ -33,7 +33,7 @@ def load(market):
         frames[tk] = S1._feat(fr).assign(ticker=tk, sector=-1)
     edates = {}
     if market == "sp500":
-        e = pd.read_parquet(REPO / "results" / "xgb" / "sp500_earnings.parquet")
+        e = pd.read_parquet(REPO / "data" / "earnings" / "sp500_earnings.parquet")
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
     return frames, {}, edates
 

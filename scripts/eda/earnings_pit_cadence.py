@@ -49,8 +49,8 @@ def summarize(disc):
 def _load_edates(market):
     from pathlib import Path
     repo = Path(__file__).resolve().parents[2]
-    fn = "hose_earnings_combined.parquet" if market == "hose" else "sp500_earnings.parquet"
-    e = pd.read_parquet(repo / "results" / "xgb" / fn)
+    fn = "hose_earnings.parquet" if market == "hose" else "sp500_earnings.parquet"
+    e = pd.read_parquet(repo / "data" / "earnings" / fn)
     e["earnings_date"] = pd.to_datetime(e["earnings_date"])
     return {tk: g["earnings_date"].to_numpy() for tk, g in e.groupby("ticker")}
 

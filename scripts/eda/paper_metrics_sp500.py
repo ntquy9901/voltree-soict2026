@@ -43,7 +43,7 @@ def main():
     min_rows = 30000 if market == "sp500" else 3000
     frames, sect, edates = FM.load(market)
     if market != "sp500":
-        _ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
+        _ep = REPO / "data" / "earnings" / "hose_earnings.parquet"
         if _ep.exists():
             _e = pd.read_parquet(_ep)
             edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in _e.groupby("ticker")}

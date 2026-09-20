@@ -18,7 +18,7 @@ OFFS = list(range(-10, 16))
 def event_curve(market):
     frames, sect, edates = FM.load(market)
     if market == "hose":
-        e = pd.read_parquet(REPO / "results" / "xgb" / "hose_earnings_combined.parquet")
+        e = pd.read_parquet(REPO / "data" / "earnings" / "hose_earnings.parquet")
         edates = {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
     acc = {d: [] for d in OFFS}
     n_events = 0

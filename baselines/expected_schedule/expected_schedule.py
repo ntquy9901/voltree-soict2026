@@ -24,7 +24,7 @@ def expected_schedule(edates):
             for tk, dates in edates.items()}
 
 def hose_quarterly_dates(disclosures_csv=None):
-    path = Path(disclosures_csv) if disclosures_csv else (REPO / "data" / "raw" / "vn_earnings" / "hose_disclosures.csv")
+    path = Path(disclosures_csv) if disclosures_csv else (REPO / "data" / "earnings" / "hose_disclosures.csv")
     d = pd.read_csv(path)
     d = d[d["quarter"].isin(QUARTERS)].copy()
     d["announcement_date"] = pd.to_datetime(d["announcement_date"])

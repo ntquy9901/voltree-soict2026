@@ -42,7 +42,7 @@ OWN = _own8()
 def _load_earn(market, edates):
     if market == "sp500":
         return edates
-    ep = REPO / "results" / "xgb" / "hose_earnings_combined.parquet"
+    ep = REPO / "data" / "earnings" / "hose_earnings.parquet"
     if ep.exists():
         e = pd.read_parquet(ep)
         return {tk: np.sort(g["earnings_date"].to_numpy()) for tk, g in e.groupby("ticker")}
