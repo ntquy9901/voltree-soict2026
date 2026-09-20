@@ -26,12 +26,12 @@ inputs at run time.
 
 Endogenous model with the leaf-cooccurrence graph, per universe and horizon:
 
-    python baselines/leaf_graph/code/run_leaf_graph.py hose
-    python baselines/leaf_graph/code/run_leaf_graph.py sp500
+    python baselines/leaf_graph/run_leaf_graph.py hose
+    python baselines/leaf_graph/run_leaf_graph.py sp500
 
 Variant that adds the earnings block using a cadence-predicted (origin-time) release schedule:
 
-    python baselines/expected_schedule/code/run_expected.py
+    python baselines/expected_schedule/run_expected.py
 
 Outputs are written under `results/xgb/` as one JSON per universe and horizon, each holding QLIKE and
 squared/absolute error metrics, a Diebold-Mariano p-value, per-regime robustness, and the fitted graph
@@ -41,15 +41,15 @@ weight.
 
 | Component | File |
 |---|---|
-| Gradient-boosted model, walk-forward evaluation, leaf-graph smoothing | `baselines/leaf_graph/code/run_leaf_graph.py` |
-| Leaf-cooccurrence graph (kNN over shared tree leaves) | `baselines/leaf_graph/code/leaf_graph_lib.py` |
-| Model configuration (windows, embargo, grids, thresholds) | `baselines/leaf_graph/code/leaf_graph_config.py` |
-| Cadence-predicted earnings schedule | `baselines/expected_schedule/code/expected_schedule.py` |
+| Gradient-boosted model, walk-forward evaluation, leaf-graph smoothing | `baselines/leaf_graph/run_leaf_graph.py` |
+| Leaf-cooccurrence graph (kNN over shared tree leaves) | `baselines/leaf_graph/leaf_graph_lib.py` |
+| Model configuration (windows, embargo, grids, thresholds) | `baselines/leaf_graph/leaf_graph_config.py` |
+| Cadence-predicted earnings schedule | `baselines/expected_schedule/expected_schedule.py` |
 | Feature panel (endogenous + earnings features) | `scripts/eda/full_matrix.py` |
 | Graph neural network over HAR features | `scripts/eda/vn_gbm_graph_stage1.py` |
-| Linear (HAR) benchmark | `baselines/har_baseline/code/full_compare.py` |
+| Linear (HAR) benchmark | `baselines/har_baseline/full_compare.py` |
 | Earnings event study | `scripts/eda/earnings_event_study.py` |
-| Diebold-Mariano test; shared statistics/helpers | `baselines/common/code/` |
+| Diebold-Mariano test; shared statistics/helpers | `baselines/common/` |
 
 ## Data sources
 
